@@ -1,0 +1,40 @@
+﻿@model ViewModels.Artist.Index
+
+@{
+  ViewData["Title"] = "List of artists";
+}
+
+<h1>List of Artists</h1>
+
+@Html.ActionLink("Add new artist", "Create")
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">First Name</th>
+      <th scope="col">Last Name</th>
+      <th scope="col">Full Name</th>
+      <th scope="col">Is Approved</th>
+      <th scope="col">User Id</th>
+      <th scope="col">Created At</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    @foreach (var item in Model.Artists)
+    {
+      <tr>
+        <td>@item.FirstName</td>
+        <td>@item.LastName</td>
+        <td>@item.FullName</td>
+        <td>@item.IsApproved</td>
+        <td>@item.UserId</td>
+        <td>@item.CreatedAt</td>
+        <td>
+          @Html.ActionLink("View", "Details", new { id = item.Id }) |
+          @Html.ActionLink("Edit", "Edit", new { id = item.Id })
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>
