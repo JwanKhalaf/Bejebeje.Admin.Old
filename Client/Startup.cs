@@ -21,6 +21,7 @@ namespace Bejebeje.Client
     {
       services.AddScoped<IArtistService, ArtistService>();
       services.AddScoped<IArtistSlugService, ArtistSlugService>();
+      services.AddScoped<ILyricService, LyricService>();
       services.Configure<DatabaseOptions>(Configuration);
       services.AddControllersWithViews();
     }
