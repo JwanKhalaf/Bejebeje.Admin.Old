@@ -3,14 +3,20 @@
   using Microsoft.AspNetCore.Mvc;
   using Services;
   using System.Threading.Tasks;
+  using ViewModels.Artist;
   using ViewModels.Lyric;
 
   public class LyricController : Controller
   {
+    private readonly IArtistService artistService;
+
     private readonly ILyricService lyricService;
 
-    public LyricController(ILyricService lyricService)
+    public LyricController(
+      IArtistService artistService,
+      ILyricService lyricService)
     {
+      this.artistService = artistService;
       this.lyricService = lyricService;
     }
 
@@ -23,7 +29,13 @@
 
     public async Task<IActionResult> Details(int id)
     {
-      LyricViewModel viewModel = await lyricService.GetLyricByIdAsync(id);
+      LyricViewModel lyric = await lyricService.GetLyricByIdAsync(id);
+
+      ArtistViewModel artist = await artistService.GetArtistByIdAsync(lyric.ArtistId);
+
+      LyricDetailsViewModel viewModel = new LyricDetailsViewModel();
+      viewModel.Lyric = lyric;
+      viewModel.Artist = artist;
 
       return View(viewModel);
     }

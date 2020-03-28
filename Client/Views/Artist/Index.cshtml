@@ -1,22 +1,27 @@
-﻿@model ViewModels.Artist.Index
+﻿@model ViewModels.Artist.ArtistIndexViewModel
+@using Common
 
 @{
   ViewData["Title"] = "List of artists";
 }
 
-<h1>List of Artists</h1>
+<div class="heading">
+  <h1>Artists</h1>
 
-@Html.ActionLink("Add new artist", "Create")
+  <div>
+    @Html.ActionLink("Add new artist", "Create", "Artist", null, new { @class = "btn btn-sm btn-primary" })
+  </div>
+</div>
 
 <table class="table">
   <thead>
     <tr>
+      <th scope="col">Id</th>
       <th scope="col">First Name</th>
       <th scope="col">Last Name</th>
-      <th scope="col">Full Name</th>
-      <th scope="col">Is Approved</th>
-      <th scope="col">User Id</th>
-      <th scope="col">Created At</th>
+      <th scope="col">Is Approved?</th>
+      <th scope="col">Is Deleted?</th>
+      <th></th>
     </tr>
   </thead>
 
@@ -24,16 +29,15 @@
     @foreach (var item in Model.Artists)
     {
       <tr>
+        <td>@item.Id</td>
         <td>@item.FirstName</td>
         <td>@item.LastName</td>
-        <td>@item.FullName</td>
-        <td>@item.IsApproved</td>
-        <td>@item.UserId</td>
-        <td>@item.CreatedAt</td>
-        <td>
+        <td>@item.IsApproved.ToYesOrNo()</td>
+        <td>@item.IsDeleted.ToYesOrNo()</td>
+        <td style="text-align: right">
           @Html.ActionLink("View", "Details", new { id = item.Id }) |
           @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-          @Html.ActionLink("See Lyrics", "Index", "Lyric", new { artistId = item.Id }) 
+          @Html.ActionLink("See Lyrics", "Index", "Lyric", new { artistId = item.Id })
         </td>
       </tr>
     }

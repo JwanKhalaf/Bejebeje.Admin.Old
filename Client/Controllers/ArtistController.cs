@@ -2,7 +2,6 @@
 {
   using Microsoft.AspNetCore.Mvc;
   using Services;
-  using System;
   using System.Collections.Generic;
   using System.Threading.Tasks;
   using ViewModels.Artist;
@@ -18,9 +17,9 @@
 
     public async Task<IActionResult> Index()
     {
-      ViewModels.Artist.Index viewModel = new ViewModels.Artist.Index();
+      ArtistIndexViewModel viewModel = new ArtistIndexViewModel();
 
-      IEnumerable<Item> artists = await artistService.GetArtistsAsync();
+      IEnumerable<ArtistListItemViewModel> artists = await artistService.GetArtistsAsync();
 
       viewModel.Artists = artists;
 
@@ -29,7 +28,7 @@
 
     public async Task<IActionResult> Details(int id)
     {
-      Item artist = await artistService.GetArtistByIdAsync(id);
+      ArtistViewModel artist = await artistService.GetArtistByIdAsync(id);
 
       return View(artist);
     }
@@ -40,7 +39,7 @@
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(Item viewModel)
+    public async Task<IActionResult> Create(ArtistViewModel viewModel)
     {
       int artistId = await artistService.AddNewArtistAsync(viewModel);
 

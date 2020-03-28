@@ -22,8 +22,11 @@ namespace Bejebeje.Client
       services.AddScoped<IArtistService, ArtistService>();
       services.AddScoped<IArtistSlugService, ArtistSlugService>();
       services.AddScoped<ILyricService, LyricService>();
+      services.AddScoped<ILyricSlugService, LyricSlugService>();
       services.Configure<DatabaseOptions>(Configuration);
-      services.AddControllersWithViews();
+      services
+        .AddControllersWithViews()
+        .AddRazorRuntimeCompilation();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

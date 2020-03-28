@@ -6,10 +6,10 @@
 
   public interface IArtistService
   {
-    Task<IEnumerable<Item>> GetArtistsAsync();
+    Task<IEnumerable<ArtistListItemViewModel>> GetArtistsAsync();
     
-    Task<Item> GetArtistByIdAsync(int id);
+    Task<ArtistViewModel> GetArtistByIdAsync(int id);
 
-    Task<int> AddNewArtistAsync(Item artist);
+    Task<int> AddNewArtistAsync(ArtistViewModel artist);
   }
 }

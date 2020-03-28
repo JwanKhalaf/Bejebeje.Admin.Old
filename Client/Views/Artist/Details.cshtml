@@ -1,14 +1,19 @@
-﻿@model ViewModels.Artist.Item
+﻿@model ViewModels.Artist.ArtistViewModel
+@using Common
 
 @{
   ViewData["Title"] = "Artist details";
 }
 
-<h1>Artist details</h1>
+<div class="heading">
+  <h1>@Model.FullName.ToTitleCase() details</h1>
+
+  <div>
+    @Html.ActionLink("See Lyrics", "Index", "Lyric", new { artistId = Model.Id }, new { @class = "btn btn-sm btn-primary" })
+  </div>
+</div>
 
 <div>
-  <h4>Item</h4>
-  <hr />
   <dl class="row">
     <dt class="col-sm-2">
       @Html.DisplayNameFor(model => model.Id)
@@ -38,7 +43,7 @@
       @Html.DisplayNameFor(model => model.IsApproved)
     </dt>
     <dd class="col-sm-10">
-      @Html.DisplayFor(model => model.IsApproved)
+      @Model.IsApproved.ToYesOrNo()
     </dd>
     <dt class="col-sm-2">
       @Html.DisplayNameFor(model => model.UserId)
@@ -50,19 +55,22 @@
       @Html.DisplayNameFor(model => model.CreatedAt)
     </dt>
     <dd class="col-sm-10">
-      @Html.DisplayFor(model => model.CreatedAt)
+      @Model.CreatedAt.ToString("dd MMM yyyy hh:mm:ss")
     </dd>
     <dt class="col-sm-2">
       @Html.DisplayNameFor(model => model.ModifiedAt)
     </dt>
     <dd class="col-sm-10">
-      @Html.DisplayFor(model => model.ModifiedAt)
+      @if (Model.ModifiedAt.HasValue)
+      {
+        @Model.ModifiedAt.Value.ToString("dd MMM yyyy hh:mm:ss")
+      }
     </dd>
     <dt class="col-sm-2">
       @Html.DisplayNameFor(model => model.IsDeleted)
     </dt>
     <dd class="col-sm-10">
-      @Html.DisplayFor(model => model.IsDeleted)
+      @Model.IsDeleted.ToYesOrNo()
     </dd>
   </dl>
 </div>

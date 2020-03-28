@@ -1,20 +1,28 @@
 ﻿namespace Services
 {
+  using Common;
   using Microsoft.Extensions.Options;
   using Npgsql;
   using Services.Config;
   using System;
   using System.Collections.Generic;
+  using System.Linq;
   using System.Threading.Tasks;
   using ViewModels.Lyric;
+  using ViewModels.LyricSlug;
 
   public class LyricService : ILyricService
   {
     private readonly DatabaseOptions databaseOptions;
 
-    public LyricService(IOptionsMonitor<DatabaseOptions> optionsAccessor)
+    private readonly ILyricSlugService lyricSlugService;
+
+    public LyricService(
+      IOptionsMonitor<DatabaseOptions> optionsAccessor,
+      ILyricSlugService lyricSlugService)
     {
       databaseOptions = optionsAccessor.CurrentValue;
+      this.lyricSlugService = lyricSlugService;
     }
 
     public async Task<LyricViewModel> GetLyricByIdAsync(int id)
@@ -106,6 +114,12 @@
 
     public async Task UpdateLyricAsync(LyricUpdateViewModel updatedLyric)
     {
+      IEnumerable<LyricSlugViewModel> lyricSlugs = await lyricSlugService.GetSlugsForLyricAsync(updatedLyric.Id);
+
+      string updatedSlug = updatedLyric.Title.NormalizeStringForUrl();
+
+      bool slugExistsAlready = lyricSlugs.Any(s => s.Name == updatedSlug);
+
       string connectionString = databaseOptions.ConnectionString;
       string sqlStatement = "update lyrics set title = @title, body = @body where id = @id";
 

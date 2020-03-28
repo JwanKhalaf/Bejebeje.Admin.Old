@@ -6,6 +6,8 @@ namespace Common
 {
   public static class StringExtensions
   {
+    private static TextInfo textInfo = new CultureInfo("ku-TR", false).TextInfo;
+
     public static string Standardize(this string input)
     {
       if (!string.IsNullOrEmpty(input))
@@ -41,6 +43,11 @@ namespace Common
       string result = stringBuilder.ToString();
       return string.Join("-", result.Split(new char[] { '_' }
         , StringSplitOptions.RemoveEmptyEntries));
+    }
+
+    public static string ToTitleCase(this string value)
+    {
+      return textInfo.ToTitleCase(value);
     }
   }
 }

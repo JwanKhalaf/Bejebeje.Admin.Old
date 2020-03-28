@@ -24,11 +24,11 @@
       this.artistSlugService = artistSlugService;
     }
 
-    public async Task<IEnumerable<Item>> GetArtistsAsync()
+    public async Task<IEnumerable<ArtistListItemViewModel>> GetArtistsAsync()
     {
       string connectionString = databaseOptions.ConnectionString;
       string sqlStatement = "select * from artists order by first_name";
-      List<Item> artists = new List<Item>();
+      List<ArtistListItemViewModel> artists = new List<ArtistListItemViewModel>();
 
       using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
       {
@@ -42,15 +42,11 @@
 
           while (reader.Read())
           {
-            Item artist = new Item();
+            ArtistListItemViewModel artist = new ArtistListItemViewModel();
             artist.Id = Convert.ToInt32(reader[0]);
             artist.FirstName = Convert.ToString(reader[1]);
             artist.LastName = Convert.ToString(reader[2]);
-            artist.FullName = Convert.ToString(reader[3]);
             artist.IsApproved = Convert.ToBoolean(reader[4]);
-            artist.UserId = Convert.ToString(reader[5]);
-            artist.CreatedAt = Convert.ToDateTime(reader[6]);
-            artist.ModifiedAt = reader[7] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader[7]);
             artist.IsDeleted = Convert.ToBoolean(reader[8]);
 
             artists.Add(artist);
@@ -65,11 +61,11 @@
       return artists;
     }
 
-    public async Task<Item> GetArtistByIdAsync(int id)
+    public async Task<ArtistViewModel> GetArtistByIdAsync(int id)
     {
       string connectionString = databaseOptions.ConnectionString;
       string sqlStatement = "select * from artists where id = @artist_id";
-      Item artist = null;
+      ArtistViewModel artist = null;
 
       using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
       {
@@ -84,7 +80,7 @@
 
           while (reader.Read())
           {
-            artist = new Item();
+            artist = new ArtistViewModel();
             artist.Id = Convert.ToInt32(reader[0]);
             artist.FirstName = Convert.ToString(reader[1]);
             artist.LastName = Convert.ToString(reader[2]);
@@ -105,7 +101,7 @@
       return artist;
     }
 
-    public async Task<int> AddNewArtistAsync(Item artist)
+    public async Task<int> AddNewArtistAsync(ArtistViewModel artist)
     {
       string connectionString = databaseOptions.ConnectionString;
       string sqlStatement = "insert into artists (first_name, last_name, full_name, is_approved, user_id, created_at, is_deleted) values (@first_name, @last_name, @full_name, @is_approved, @user_id, @created_at, @is_deleted) returning id";

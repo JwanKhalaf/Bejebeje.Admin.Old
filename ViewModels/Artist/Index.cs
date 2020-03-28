@@ -4,6 +4,6 @@
 
   public class Index
   {
-    public IEnumerable<Item> Artists { get; set; }
+    public IEnumerable<ArtistViewModel> Artists { get; set; }
   }
 }
