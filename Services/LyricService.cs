@@ -15,13 +15,17 @@
   {
     private readonly DatabaseOptions databaseOptions;
 
+    private readonly IArtistService artistService;
+
     private readonly ILyricSlugService lyricSlugService;
 
     public LyricService(
       IOptionsMonitor<DatabaseOptions> optionsAccessor,
+      IArtistService artistService,
       ILyricSlugService lyricSlugService)
     {
       databaseOptions = optionsAccessor.CurrentValue;
+      this.artistService = artistService;
       this.lyricSlugService = lyricSlugService;
     }
 
@@ -107,7 +111,10 @@
         }
       }
 
+      var artist = await artistService.GetArtistByIdAsync(artistId);
+
       model.Lyrics = lyrics;
+      model.Artist = artist;
 
       return model;
     }
@@ -118,17 +125,73 @@
 
       string updatedSlug = updatedLyric.Title.NormalizeStringForUrl();
 
-      bool slugExistsAlready = lyricSlugs.Any(s => s.Name == updatedSlug);
+      bool slugDoesNotExistAlready = lyricSlugs.Any(s => s.Name != updatedSlug);
 
       string connectionString = databaseOptions.ConnectionString;
-      string sqlStatement = "update lyrics set title = @title, body = @body where id = @id";
+      string sqlStatementToUpdateLyric = "update lyrics set title = @title, body = @body where id = @id";
 
       using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
       {
-        NpgsqlCommand command = new NpgsqlCommand(sqlStatement, connection);
+        NpgsqlCommand command = new NpgsqlCommand(sqlStatementToUpdateLyric, connection);
         command.Parameters.AddWithValue("@id", updatedLyric.Id);
         command.Parameters.AddWithValue("@title", updatedLyric.Title);
         command.Parameters.AddWithValue("@body", updatedLyric.Body);
+
+        try
+        {
+          await connection.OpenAsync();
+
+          NpgsqlDataReader reader = await command.ExecuteReaderAsync();
+        }
+        catch (Exception ex)
+        {
+          Console.WriteLine(ex.Message);
+        }
+      }
+
+      if (slugDoesNotExistAlready)
+      {
+        await SetIsPrimaryAsFalseOnAllLyricSlugsForLyricWithIdAsync(updatedLyric.Id);
+
+        string sqlStatementToAddNewLyricSlug = "insert into lyric_slugs (name, is_primary, created_at, is_deleted, lyric_id) values(@name, @is_primary, @created_at, @is_deleted, @lyric_id)";
+        
+        int lyricId = updatedLyric.Id;
+        bool isPrimary = true;
+        bool isDeleted = false;
+        DateTime createdAt = DateTime.UtcNow;
+
+        using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+        {
+          NpgsqlCommand command = new NpgsqlCommand(sqlStatementToAddNewLyricSlug, connection);
+          command.Parameters.AddWithValue("@name", updatedLyric.Title.NormalizeStringForUrl());
+          command.Parameters.AddWithValue("@is_primary", isPrimary);
+          command.Parameters.AddWithValue("@created_at", createdAt);
+          command.Parameters.AddWithValue("@is_deleted", isDeleted);
+          command.Parameters.AddWithValue("@lyric_id", lyricId);
+
+          try
+          {
+            await connection.OpenAsync();
+
+            NpgsqlDataReader reader = await command.ExecuteReaderAsync();
+          }
+          catch (Exception ex)
+          {
+            Console.WriteLine(ex.Message);
+          }
+        }
+      }
+    }
+
+    private async Task SetIsPrimaryAsFalseOnAllLyricSlugsForLyricWithIdAsync(int lyricId)
+    {
+      string connectionString = databaseOptions.ConnectionString;
+      string sqlStatementToUpdateLyric = "update lyric_slugs set is_primary = false where lyric_id = @lyric_id";
+
+      using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+      {
+        NpgsqlCommand command = new NpgsqlCommand(sqlStatementToUpdateLyric, connection);
+        command.Parameters.AddWithValue("@lyric_id", lyricId);
 
         try
         {

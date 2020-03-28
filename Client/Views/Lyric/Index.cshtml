@@ -1,19 +1,43 @@
 ﻿@model ViewModels.Lyric.ArtistLyricsViewModel
+@using Common
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+  <div class="heading">
+    <h1>@Model.Artist.FullName.ToTitleCase() lyrics</h1>
 
-<div>
+    <div>
+      @Html.ActionLink("Add new lyric", "Create", "Artist", null, new { @class = "btn btn-sm btn-primary" })
+    </div>
+  </div>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Title</th>
+      <th scope="col">Created at</th>
+      <th scope="col">Is approved?</th>
+      <th scope="col">Is deleted?</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
     @foreach (var lyric in Model.Lyrics)
     {
-      <h4>@lyric.Title</h4>
-      <h6>@Html.ActionLink("Details", "Details", new { id = lyric.Id })</h6>
+      <tr>
+        <td>@lyric.Id</td>
+        <td>@lyric.Title</td>
+        <td>@lyric.CreatedAt</td>
+        <td>@lyric.IsApproved.ToYesOrNo()</td>
+        <td>@lyric.IsDeleted.ToYesOrNo()</td>
+        <td style="text-align: right">
+          @Html.ActionLink("Details", "Details", new { id = lyric.Id })
+        </td>
+      </tr>
     }
-</div>
-<div>
-    
-    <a asp-action="Index">Back to List</a>
-</div>
+  </tbody>
+</table>
