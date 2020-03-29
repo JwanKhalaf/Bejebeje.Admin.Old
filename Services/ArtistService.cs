@@ -3,7 +3,7 @@
   using Common;
   using Microsoft.Extensions.Options;
   using Npgsql;
-  using Services.Config;
+  using Config;
   using System;
   using System.Collections.Generic;
   using System.Threading.Tasks;
@@ -12,21 +12,21 @@
 
   public class ArtistService : IArtistService
   {
-    private readonly DatabaseOptions databaseOptions;
+    private readonly DatabaseOptions _databaseOptions;
 
-    private readonly IArtistSlugService artistSlugService;
+    private readonly IArtistSlugService _artistSlugService;
 
     public ArtistService(
       IOptionsMonitor<DatabaseOptions> optionsAccessor,
       IArtistSlugService artistSlugService)
     {
-      databaseOptions = optionsAccessor.CurrentValue;
-      this.artistSlugService = artistSlugService;
+      _databaseOptions = optionsAccessor.CurrentValue;
+      _artistSlugService = artistSlugService;
     }
 
     public async Task<IEnumerable<ArtistListItemViewModel>> GetArtistsAsync()
     {
-      string connectionString = databaseOptions.ConnectionString;
+      string connectionString = _databaseOptions.ConnectionString;
       string sqlStatement = "select * from artists order by first_name";
       List<ArtistListItemViewModel> artists = new List<ArtistListItemViewModel>();
 
@@ -63,7 +63,7 @@
 
     public async Task<ArtistViewModel> GetArtistByIdAsync(int id)
     {
-      string connectionString = databaseOptions.ConnectionString;
+      string connectionString = _databaseOptions.ConnectionString;
       string sqlStatement = "select * from artists where id = @artist_id";
       ArtistViewModel artist = null;
 
@@ -103,7 +103,7 @@
 
     public async Task<int> AddNewArtistAsync(ArtistViewModel artist)
     {
-      string connectionString = databaseOptions.ConnectionString;
+      string connectionString = _databaseOptions.ConnectionString;
       string sqlStatement = "insert into artists (first_name, last_name, full_name, is_approved, user_id, created_at, is_deleted) values (@first_name, @last_name, @full_name, @is_approved, @user_id, @created_at, @is_deleted) returning id";
       int artistId = 0;
 
@@ -112,7 +112,7 @@
       string fullName = string.IsNullOrEmpty(lastName) ? firstName : $"{firstName} {lastName}";
       bool isApproved = true;
       DateTime createdAt = DateTime.UtcNow;
-      string userId = databaseOptions.UserId;
+      string userId = _databaseOptions.UserId;
       bool isDeleted = false;
 
       using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
@@ -139,7 +139,7 @@
           artistSlug.CreatedAt = createdAt;
           artistSlug.ArtistId = artistId;
 
-          await artistSlugService.AddNewArtistSlugAsync(artistSlug);
+          await _artistSlugService.AddNewArtistSlugAsync(artistSlug);
         }
         catch (Exception ex)
         {

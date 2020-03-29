@@ -2,23 +2,23 @@
 {
   using Microsoft.Extensions.Options;
   using Npgsql;
-  using Services.Config;
+  using Config;
   using System;
   using System.Threading.Tasks;
   using ViewModels;
 
   public class ArtistSlugService : IArtistSlugService
   {
-    private readonly DatabaseOptions databaseOptions;
+    private readonly DatabaseOptions _databaseOptions;
 
     public ArtistSlugService(IOptionsMonitor<DatabaseOptions> optionsAccessor)
     {
-      databaseOptions = optionsAccessor.CurrentValue;
+      _databaseOptions = optionsAccessor.CurrentValue;
     }
 
     public async Task AddNewArtistSlugAsync(ArtistSlugViewModel artistSlug)
     {
-      string connectionString = databaseOptions.ConnectionString;
+      string connectionString = _databaseOptions.ConnectionString;
       string sqlStatement = "insert into artist_slugs (name, is_primary, created_at, is_deleted, artist_id) values (@name, @is_primary, @created_at, @is_deleted, @artist_id)";
 
       using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))

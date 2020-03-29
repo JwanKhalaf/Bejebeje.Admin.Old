@@ -8,30 +8,30 @@
 
   public class LyricController : Controller
   {
-    private readonly IArtistService artistService;
+    private readonly IArtistService _artistService;
 
-    private readonly ILyricService lyricService;
+    private readonly ILyricService _lyricService;
 
     public LyricController(
       IArtistService artistService,
       ILyricService lyricService)
     {
-      this.artistService = artistService;
-      this.lyricService = lyricService;
+      _artistService = artistService;
+      _lyricService = lyricService;
     }
 
     public async Task<IActionResult> Index([FromQuery] int artistId)
     {
-      ArtistLyricsViewModel viewModel = await lyricService.GetLyricsForArtistAsync(artistId);
+      ArtistLyricsViewModel viewModel = await _lyricService.GetLyricsForArtistAsync(artistId);
 
       return View(viewModel);
     }
 
     public async Task<IActionResult> Details(int id)
     {
-      LyricViewModel lyric = await lyricService.GetLyricByIdAsync(id);
+      LyricViewModel lyric = await _lyricService.GetLyricByIdAsync(id);
 
-      ArtistViewModel artist = await artistService.GetArtistByIdAsync(lyric.ArtistId);
+      ArtistViewModel artist = await _artistService.GetArtistByIdAsync(lyric.ArtistId);
 
       LyricDetailsViewModel viewModel = new LyricDetailsViewModel();
       viewModel.Lyric = lyric;
@@ -42,7 +42,7 @@
 
     public async Task<IActionResult> Edit(int id)
     {
-      LyricViewModel lyric = await lyricService.GetLyricByIdAsync(id);
+      LyricViewModel lyric = await _lyricService.GetLyricByIdAsync(id);
 
       LyricUpdateViewModel viewModel = new LyricUpdateViewModel();
       viewModel.Id = lyric.Id;
@@ -55,7 +55,7 @@
     [HttpPost]
     public async Task<IActionResult> Edit(LyricUpdateViewModel updatedLyric)
     {
-      await lyricService.UpdateLyricAsync(updatedLyric);
+      await _lyricService.UpdateLyricAsync(updatedLyric);
 
       return RedirectToAction("Details", new { id = updatedLyric.Id });
     }

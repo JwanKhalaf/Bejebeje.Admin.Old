@@ -1,7 +1,7 @@
 ﻿namespace ViewModels.Lyric
 {
   using System.Collections.Generic;
-  using ViewModels.Artist;
+  using Artist;
 
   public class ArtistLyricsViewModel
   {

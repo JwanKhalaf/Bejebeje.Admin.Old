@@ -8,11 +8,11 @@ namespace Client.Controllers
 {
   public class LyricSlugController : Controller
   {
-    private readonly ILyricSlugService lyricSlugService;
+    private readonly ILyricSlugService _lyricSlugService;
 
     public LyricSlugController(ILyricSlugService lyricSlugService)
     {
-      this.lyricSlugService = lyricSlugService;
+      _lyricSlugService = lyricSlugService;
     }
 
     public IActionResult Create([FromQuery] int lyricId)
@@ -31,11 +31,11 @@ namespace Client.Controllers
         lyricSlug.CreatedAt = DateTime.UtcNow;
         lyricSlug.IsDeleted = false;
 
-        await lyricSlugService.AddNewLyricSlugAsync(lyricSlug);
+        await _lyricSlugService.AddNewLyricSlugAsync(lyricSlug);
 
         return RedirectToAction("Details", "Lyric", new { id = lyricSlug.LyricId });
       }
-      catch (System.Exception)
+      catch (Exception)
       {
 
         throw;

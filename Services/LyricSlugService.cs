@@ -11,16 +11,16 @@ namespace Services
 {
   public class LyricSlugService : ILyricSlugService
   {
-    private readonly DatabaseOptions databaseOptions;
+    private readonly DatabaseOptions _databaseOptions;
 
     public LyricSlugService(IOptionsMonitor<DatabaseOptions> optionsAccessor)
     {
-      databaseOptions = optionsAccessor.CurrentValue;
+      _databaseOptions = optionsAccessor.CurrentValue;
     }
 
     public async Task<int> AddNewLyricSlugAsync(LyricSlugCreateViewModel newLyricSlug)
     {
-      string connectionString = databaseOptions.ConnectionString;
+      string connectionString = _databaseOptions.ConnectionString;
       string sqlStatement = "insert into lyric_slugs (name, is_primary, created_at, is_deleted, lyric_id) values (@name, @is_primary, @created_at, @is_deleted, @lyric_id) returning id";
       int lyricSlugId = 0;
 
@@ -51,7 +51,7 @@ namespace Services
 
     public async Task<IEnumerable<LyricSlugViewModel>> GetSlugsForLyricAsync(int lyricId)
     {
-      string connectionString = databaseOptions.ConnectionString;
+      string connectionString = _databaseOptions.ConnectionString;
       string sqlStatement = "select * from lyric_slugs where lyric_id = @lyric_id";
       List<LyricSlugViewModel> lyricSlugs = new List<LyricSlugViewModel>();
 
@@ -87,6 +87,29 @@ namespace Services
       }
 
       return lyricSlugs;
+    }
+
+    public async Task MakeLyricSlugPrimaryAsync(int lyricSlugId)
+    {
+      string connectionString = _databaseOptions.ConnectionString;
+      string sqlStatement = "update lyric_slugs set is_primary = true where id = @id";
+
+      using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+      {
+        NpgsqlCommand command = new NpgsqlCommand(sqlStatement, connection);
+        command.Parameters.AddWithValue("@id", lyricSlugId);
+
+        try
+        {
+          await connection.OpenAsync();
+
+          await command.ExecuteNonQueryAsync();
+        }
+        catch (Exception ex)
+        {
+          Console.WriteLine(ex.Message);
+        }
+      }
     }
   }
 }

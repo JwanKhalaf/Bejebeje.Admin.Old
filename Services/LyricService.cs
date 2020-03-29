@@ -3,7 +3,7 @@
   using Common;
   using Microsoft.Extensions.Options;
   using Npgsql;
-  using Services.Config;
+  using Config;
   using System;
   using System.Collections.Generic;
   using System.Linq;
@@ -13,25 +13,25 @@
 
   public class LyricService : ILyricService
   {
-    private readonly DatabaseOptions databaseOptions;
+    private readonly DatabaseOptions _databaseOptions;
 
-    private readonly IArtistService artistService;
+    private readonly IArtistService _artistService;
 
-    private readonly ILyricSlugService lyricSlugService;
+    private readonly ILyricSlugService _lyricSlugService;
 
     public LyricService(
       IOptionsMonitor<DatabaseOptions> optionsAccessor,
       IArtistService artistService,
       ILyricSlugService lyricSlugService)
     {
-      databaseOptions = optionsAccessor.CurrentValue;
-      this.artistService = artistService;
-      this.lyricSlugService = lyricSlugService;
+      _databaseOptions = optionsAccessor.CurrentValue;
+      _artistService = artistService;
+      _lyricSlugService = lyricSlugService;
     }
 
     public async Task<LyricViewModel> GetLyricByIdAsync(int id)
     {
-      string connectionString = databaseOptions.ConnectionString;
+      string connectionString = _databaseOptions.ConnectionString;
       string sqlStatement = "select * from lyrics where id = @id";
       LyricViewModel lyric = null;
 
@@ -72,7 +72,7 @@
 
     public async Task<ArtistLyricsViewModel> GetLyricsForArtistAsync(int artistId)
     {
-      string connectionString = databaseOptions.ConnectionString;
+      string connectionString = _databaseOptions.ConnectionString;
       string sqlStatement = "select * from lyrics where artist_id = @artist_id order by title";
       ArtistLyricsViewModel model = new ArtistLyricsViewModel();
       List<LyricViewModel> lyrics = new List<LyricViewModel>();
@@ -111,7 +111,7 @@
         }
       }
 
-      var artist = await artistService.GetArtistByIdAsync(artistId);
+      var artist = await _artistService.GetArtistByIdAsync(artistId);
 
       model.Lyrics = lyrics;
       model.Artist = artist;
@@ -121,13 +121,13 @@
 
     public async Task UpdateLyricAsync(LyricUpdateViewModel updatedLyric)
     {
-      IEnumerable<LyricSlugViewModel> lyricSlugs = await lyricSlugService.GetSlugsForLyricAsync(updatedLyric.Id);
+      IEnumerable<LyricSlugViewModel> lyricSlugs = await _lyricSlugService.GetSlugsForLyricAsync(updatedLyric.Id);
 
       string updatedSlug = updatedLyric.Title.NormalizeStringForUrl();
 
-      bool slugDoesNotExistAlready = lyricSlugs.Any(s => s.Name != updatedSlug);
+      bool slugDoesNotExistAlready = !lyricSlugs.Any(s => s.Name == updatedSlug);
 
-      string connectionString = databaseOptions.ConnectionString;
+      string connectionString = _databaseOptions.ConnectionString;
       string sqlStatementToUpdateLyric = "update lyrics set title = @title, body = @body where id = @id";
 
       using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
@@ -181,11 +181,19 @@
           }
         }
       }
+      else
+      {
+        await SetIsPrimaryAsFalseOnAllLyricSlugsForLyricWithIdAsync(updatedLyric.Id);
+
+        LyricSlugViewModel existingLyricSlug = lyricSlugs.Single(s => s.Name == updatedSlug);
+
+        await _lyricSlugService.MakeLyricSlugPrimaryAsync(existingLyricSlug.Id);
+      }
     }
 
     private async Task SetIsPrimaryAsFalseOnAllLyricSlugsForLyricWithIdAsync(int lyricId)
     {
-      string connectionString = databaseOptions.ConnectionString;
+      string connectionString = _databaseOptions.ConnectionString;
       string sqlStatementToUpdateLyric = "update lyric_slugs set is_primary = false where lyric_id = @lyric_id";
 
       using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))

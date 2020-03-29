@@ -9,5 +9,7 @@ namespace Services
     Task<IEnumerable<LyricSlugViewModel>> GetSlugsForLyricAsync(int lyricId);
 
     Task<int> AddNewLyricSlugAsync(LyricSlugCreateViewModel newLyricSlug);
+
+    Task MakeLyricSlugPrimaryAsync(int lyricSlugId);
   }
 }

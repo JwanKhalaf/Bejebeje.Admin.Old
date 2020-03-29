@@ -6,7 +6,7 @@ namespace Common
 {
   public static class StringExtensions
   {
-    private static TextInfo textInfo = new CultureInfo("ku-TR", false).TextInfo;
+    private static TextInfo _textInfo = new CultureInfo("ku-TR", false).TextInfo;
 
     public static string Standardize(this string input)
     {
@@ -47,7 +47,7 @@ namespace Common
 
     public static string ToTitleCase(this string value)
     {
-      return textInfo.ToTitleCase(value);
+      return _textInfo.ToTitleCase(value);
     }
   }
 }

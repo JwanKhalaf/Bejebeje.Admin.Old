@@ -10,7 +10,7 @@
 
   <div>
     @Html.ActionLink("Add new lyric slug", "Create", "LyricSlug", new { lyricId = Model.Lyric.Id }, new { @class = "btn btn-sm btn-primary" })
-    @Html.ActionLink("Edit", "Edit", "Lyric", new { id = Model.Lyric.Id }, new { @class = "btn btn-sm btn-warning" })
+    @Html.ActionLink("Edit Lyric", "Edit", "Lyric", new { id = Model.Lyric.Id }, new { @class = "btn btn-sm btn-warning" })
   </div>
 </div>
 
@@ -44,25 +44,28 @@
       @Html.DisplayNameFor(model => model.Lyric.CreatedAt)
     </dt>
     <dd class="col-sm-10">
-      @Html.DisplayFor(model => model.Lyric.CreatedAt)
+      @Model.Lyric.CreatedAt.ToString("dd MMM yyyy hh:mm:ss")
     </dd>
     <dt class="col-sm-2">
       @Html.DisplayNameFor(model => model.Lyric.ModifiedAt)
     </dt>
     <dd class="col-sm-10">
-      @Html.DisplayFor(model => model.Lyric.ModifiedAt)
+      @if (Model.Lyric.ModifiedAt.HasValue)
+      {
+        @Model.Lyric.ModifiedAt.Value.ToString("dd MMM yyyy hh:mm:ss")
+      }
     </dd>
     <dt class="col-sm-2">
       @Html.DisplayNameFor(model => model.Lyric.IsDeleted)
     </dt>
     <dd class="col-sm-10">
-      @Html.DisplayFor(model => model.Lyric.IsDeleted)
+      @Model.Lyric.IsDeleted.ToYesOrNo()
     </dd>
     <dt class="col-sm-2">
       @Html.DisplayNameFor(model => model.Lyric.IsApproved)
     </dt>
     <dd class="col-sm-10">
-      @Html.DisplayFor(model => model.Lyric.IsApproved)
+      @Model.Lyric.IsApproved.ToYesOrNo()
     </dd>
     <dt class="col-sm-2">
       @Html.DisplayNameFor(model => model.Lyric.ArtistId)

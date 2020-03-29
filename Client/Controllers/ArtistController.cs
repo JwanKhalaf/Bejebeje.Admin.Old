@@ -8,18 +8,18 @@
 
   public class ArtistController : Controller
   {
-    private readonly IArtistService artistService;
+    private readonly IArtistService _artistService;
 
     public ArtistController(IArtistService artistService)
     {
-      this.artistService = artistService;
+      _artistService = artistService;
     }
 
     public async Task<IActionResult> Index()
     {
       ArtistIndexViewModel viewModel = new ArtistIndexViewModel();
 
-      IEnumerable<ArtistListItemViewModel> artists = await artistService.GetArtistsAsync();
+      IEnumerable<ArtistListItemViewModel> artists = await _artistService.GetArtistsAsync();
 
       viewModel.Artists = artists;
 
@@ -28,7 +28,7 @@
 
     public async Task<IActionResult> Details(int id)
     {
-      ArtistViewModel artist = await artistService.GetArtistByIdAsync(id);
+      ArtistViewModel artist = await _artistService.GetArtistByIdAsync(id);
 
       return View(artist);
     }
@@ -41,7 +41,7 @@
     [HttpPost]
     public async Task<IActionResult> Create(ArtistViewModel viewModel)
     {
-      int artistId = await artistService.AddNewArtistAsync(viewModel);
+      int artistId = await _artistService.AddNewArtistAsync(viewModel);
 
       return RedirectToAction("Details", new { id = artistId });
     }
