@@ -11,5 +11,7 @@
     Task<ArtistViewModel> GetArtistByIdAsync(int id);
 
     Task<int> AddNewArtistAsync(ArtistViewModel artist);
+
+    Task EditArtistAsync(ArtistEditViewModel editedArtist);
   }
 }

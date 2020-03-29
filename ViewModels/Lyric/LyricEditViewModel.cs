@@ -2,7 +2,7 @@
 
 namespace ViewModels.Lyric
 {
-  public class LyricUpdateViewModel
+  public class LyricEditViewModel
   {
     [Required]
     public int Id { get; set; }

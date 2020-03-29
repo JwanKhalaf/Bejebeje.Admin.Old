@@ -11,5 +11,7 @@ namespace Services
     Task<int> AddNewLyricSlugAsync(LyricSlugCreateViewModel newLyricSlug);
 
     Task MakeLyricSlugPrimaryAsync(int lyricSlugId);
+
+    Task MarkIsPrimaryAsFalseForAllLyricSlugs(int lyricId);
   }
 }

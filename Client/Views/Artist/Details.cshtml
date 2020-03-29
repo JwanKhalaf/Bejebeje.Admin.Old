@@ -9,7 +9,9 @@
   <h1>@Model.FullName.ToTitleCase() details</h1>
 
   <div>
+    @Html.ActionLink("Edit artist", "Edit", new { id = @Model.Id }, new { @class = "btn btn-sm btn-warning" })
     @Html.ActionLink("See Lyrics", "Index", "Lyric", new { artistId = Model.Id }, new { @class = "btn btn-sm btn-primary" })
+    @Html.ActionLink("Add new slug", "Create", "ArtistSlug", new { artistId = Model.Id }, new { @class = "btn btn-sm btn-primary" })
   </div>
 </div>
 
@@ -75,6 +77,5 @@
   </dl>
 </div>
 <div>
-  @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
   <a asp-action="Index">Back to List</a>
 </div>

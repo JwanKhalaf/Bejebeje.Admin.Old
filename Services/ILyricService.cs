@@ -9,6 +9,6 @@
 
     Task<ArtistLyricsViewModel> GetLyricsForArtistAsync(int artistId);
 
-    Task UpdateLyricAsync(LyricUpdateViewModel updatedLyric);
+    Task EditLyricAsync(LyricEditViewModel editedLyric);
   }
 }

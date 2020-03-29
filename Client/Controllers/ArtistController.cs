@@ -1,5 +1,6 @@
 ﻿namespace Client.Controllers
 {
+  using System;
   using Microsoft.AspNetCore.Mvc;
   using Services;
   using System.Collections.Generic;
@@ -44,6 +45,37 @@
       int artistId = await _artistService.AddNewArtistAsync(viewModel);
 
       return RedirectToAction("Details", new { id = artistId });
+    }
+
+    public async Task<IActionResult> Edit(int id)
+    {
+      ArtistViewModel artist = await _artistService.GetArtistByIdAsync(id);
+
+      ArtistEditViewModel viewModel = new ArtistEditViewModel();
+      viewModel.Id = artist.Id;
+      viewModel.FirstName = artist.FirstName;
+      viewModel.LastName = artist.LastName;
+      viewModel.IsApproved = artist.IsApproved;
+      viewModel.IsDeleted = artist.IsDeleted;
+
+      return View(viewModel);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Edit(ArtistEditViewModel editedArtist)
+    {
+      try
+      {
+        await _artistService.EditArtistAsync(editedArtist);
+
+        return RedirectToAction("Details", "Artist", new { id = editedArtist.Id });
+      }
+      catch (Exception exception)
+      {
+        Console.WriteLine(exception);
+
+        throw;
+      }
     }
   }
 }

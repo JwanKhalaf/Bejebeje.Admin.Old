@@ -111,5 +111,30 @@ namespace Services
         }
       }
     }
+
+    public async Task MarkIsPrimaryAsFalseForAllLyricSlugs(int lyricId)
+    {
+      string connectionString = _databaseOptions.ConnectionString;
+      string sqlStatementToUpdateLyric = "update lyric_slugs set is_primary = false where lyric_id = @lyric_id";
+
+      using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+      {
+        NpgsqlCommand command = new NpgsqlCommand(sqlStatementToUpdateLyric, connection);
+        command.Parameters.AddWithValue("@lyric_id", lyricId);
+
+        try
+        {
+          await connection.OpenAsync();
+
+          NpgsqlDataReader reader = await command.ExecuteReaderAsync();
+        }
+        catch (Exception ex)
+        {
+          Console.WriteLine(ex.Message);
+
+          throw;
+        }
+      }
+    }
   }
 }

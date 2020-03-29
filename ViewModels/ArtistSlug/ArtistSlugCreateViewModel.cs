@@ -1,18 +1,17 @@
-﻿namespace ViewModels.ArtistSlug
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ViewModels.ArtistSlug
 {
   using System;
 
-  public class ArtistSlugViewModel
+  public class ArtistSlugCreateViewModel
   {
-    public int Id { get; set; }
-
     public string Name { get; set; }
 
+    [Display (Name = "Is primary?")]
     public bool IsPrimary { get; set; }
 
     public DateTime CreatedAt { get; set; }
-
-    public DateTime? ModifiedAt { get; set; }
 
     public bool IsDeleted { get; set; }
 

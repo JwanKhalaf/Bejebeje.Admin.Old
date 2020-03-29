@@ -1,4 +1,6 @@
-﻿namespace Services
+﻿using System.Linq;
+
+namespace Services
 {
   using Common;
   using Microsoft.Extensions.Options;
@@ -7,7 +9,7 @@
   using System;
   using System.Collections.Generic;
   using System.Threading.Tasks;
-  using ViewModels;
+  using ViewModels.ArtistSlug;
   using ViewModels.Artist;
 
   public class ArtistService : IArtistService
@@ -133,7 +135,7 @@
           object artistIdentity = command.ExecuteScalar();
           artistId = (int)artistIdentity;
 
-          ArtistSlugViewModel artistSlug = new ArtistSlugViewModel();
+          ArtistSlugCreateViewModel artistSlug = new ArtistSlugCreateViewModel();
           artistSlug.Name = fullName.NormalizeStringForUrl();
           artistSlug.IsPrimary = true;
           artistSlug.CreatedAt = createdAt;
@@ -148,6 +150,73 @@
       }
 
       return artistId;
+    }
+
+    public async Task EditArtistAsync(ArtistEditViewModel editedArtist)
+    {
+      string connectionString = _databaseOptions.ConnectionString;
+      string sqlStatementToUpdateLyric = "update artists set first_name = @first_name, last_name = @last_name, full_name = @full_name, is_approved = @is_approved, modified_at = @modified_at, is_deleted = @is_deleted where id = @id";
+
+      int artistId = editedArtist.Id;
+      string firstName = editedArtist.FirstName.Standardize();
+      string lastName = editedArtist.LastName.Standardize();
+      string fullName = string.IsNullOrEmpty(lastName)
+        ? firstName
+        : $"{firstName} {lastName}";
+      bool isApproved = editedArtist.IsApproved;
+      DateTime modifiedAt = DateTime.UtcNow;
+      bool isDeleted = editedArtist.IsDeleted;
+
+      IEnumerable<ArtistSlugViewModel> artistSlugs = await _artistSlugService.GetSlugsForArtistAsync(editedArtist.Id);
+
+      string updatedSlug = fullName.NormalizeStringForUrl();
+
+      bool slugDoesNotExistAlready = artistSlugs.All(s => s.Name != updatedSlug);
+
+      if (slugDoesNotExistAlready)
+      {
+        ArtistSlugCreateViewModel newArtistSlug = new ArtistSlugCreateViewModel();
+        newArtistSlug.Name = fullName.NormalizeStringForUrl();
+        newArtistSlug.IsDeleted = false;
+        newArtistSlug.CreatedAt = DateTime.UtcNow;
+        newArtistSlug.IsPrimary = true;
+        newArtistSlug.ArtistId = editedArtist.Id;
+
+        await _artistSlugService.AddNewArtistSlugAsync(newArtistSlug);
+      }
+      else
+      {
+        await _artistSlugService.MarkIsPrimaryAsFalseForAllArtistSlugs(editedArtist.Id);
+
+        ArtistSlugViewModel existingSlug = artistSlugs.Single(s => s.Name == updatedSlug);
+
+        await _artistSlugService.MarkArtistSlugAsPrimary(existingSlug.Id);
+      }
+
+      using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+      {
+        NpgsqlCommand command = new NpgsqlCommand(sqlStatementToUpdateLyric, connection);
+        command.Parameters.AddWithValue("@id", artistId);
+        command.Parameters.AddWithValue("@first_name", firstName);
+        command.Parameters.AddWithValue("@last_name", lastName);
+        command.Parameters.AddWithValue("@full_name", fullName);
+        command.Parameters.AddWithValue("@is_approved", isApproved);
+        command.Parameters.AddWithValue("@modified_at", modifiedAt);
+        command.Parameters.AddWithValue("@is_deleted", isDeleted);
+
+        try
+        {
+          await connection.OpenAsync();
+
+          await command.ExecuteNonQueryAsync();
+        }
+        catch (Exception ex)
+        {
+          Console.WriteLine(ex.Message);
+
+          throw;
+        }
+      }
     }
   }
 }

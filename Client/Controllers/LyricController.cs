@@ -44,7 +44,7 @@
     {
       LyricViewModel lyric = await _lyricService.GetLyricByIdAsync(id);
 
-      LyricUpdateViewModel viewModel = new LyricUpdateViewModel();
+      LyricEditViewModel viewModel = new LyricEditViewModel();
       viewModel.Id = lyric.Id;
       viewModel.Title = lyric.Title;
       viewModel.Body = lyric.Body;
@@ -53,9 +53,9 @@
     }
 
     [HttpPost]
-    public async Task<IActionResult> Edit(LyricUpdateViewModel updatedLyric)
+    public async Task<IActionResult> Edit(LyricEditViewModel updatedLyric)
     {
-      await _lyricService.UpdateLyricAsync(updatedLyric);
+      await _lyricService.EditLyricAsync(updatedLyric);
 
       return RedirectToAction("Details", new { id = updatedLyric.Id });
     }
