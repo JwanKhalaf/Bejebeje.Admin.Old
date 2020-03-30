@@ -1,6 +1,4 @@
-using System;
-
-namespace Bejebeje.Client.Models
+namespace Client.Models
 {
   public class ErrorViewModel
   {

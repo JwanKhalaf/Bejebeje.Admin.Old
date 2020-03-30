@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace Services
+﻿namespace Services
 {
   using Common;
   using Microsoft.Extensions.Options;
@@ -10,6 +8,7 @@ namespace Services
   using System.Collections.Generic;
   using System.Threading.Tasks;
   using ViewModels.ArtistSlug;
+  using System.Linq;
   using ViewModels.Artist;
 
   public class ArtistService : IArtistService

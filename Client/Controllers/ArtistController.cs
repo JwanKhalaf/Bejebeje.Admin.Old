@@ -1,4 +1,7 @@
-﻿namespace Client.Controllers
+﻿using System.Collections;
+using ViewModels.ArtistSlug;
+
+namespace Client.Controllers
 {
   using System;
   using Microsoft.AspNetCore.Mvc;
@@ -11,9 +14,14 @@
   {
     private readonly IArtistService _artistService;
 
-    public ArtistController(IArtistService artistService)
+    private readonly IArtistSlugService _artistSlugService;
+
+    public ArtistController(
+      IArtistService artistService,
+      IArtistSlugService artistSlugService)
     {
       _artistService = artistService;
+      _artistSlugService = artistSlugService;
     }
 
     public async Task<IActionResult> Index()
@@ -30,8 +38,13 @@
     public async Task<IActionResult> Details(int id)
     {
       ArtistViewModel artist = await _artistService.GetArtistByIdAsync(id);
+      IEnumerable<ArtistSlugViewModel> slugs = await _artistSlugService.GetSlugsForArtistAsync(id);
 
-      return View(artist);
+      ArtistDetailsViewModel viewModel = new ArtistDetailsViewModel();
+      viewModel.Artist = artist;
+      viewModel.Slugs = slugs;
+
+      return View(viewModel);
     }
 
     public IActionResult Create()

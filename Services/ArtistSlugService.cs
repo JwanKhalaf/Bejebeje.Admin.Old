@@ -1,5 +1,6 @@
 ﻿namespace Services
 {
+  using Common;
   using Microsoft.Extensions.Options;
   using Npgsql;
   using Config;
@@ -59,6 +60,46 @@
       return artistSlugs;
     }
 
+    public async Task<ArtistSlugViewModel> GetArtistSlugByIdAsync(int id)
+    {
+      string connectionString = _databaseOptions.ConnectionString;
+      string sqlStatement = "select * from artist_slugs where id = @id";
+      ArtistSlugViewModel artistSlug = null;
+
+      using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+      {
+        NpgsqlCommand command = new NpgsqlCommand(sqlStatement, connection);
+        command.Parameters.AddWithValue("@id", id);
+
+        try
+        {
+          await connection.OpenAsync();
+
+          NpgsqlDataReader reader = await command.ExecuteReaderAsync();
+
+          while (reader.Read())
+          {
+            artistSlug = new ArtistSlugViewModel();
+            artistSlug.Id = Convert.ToInt32(reader[0]);
+            artistSlug.Name = Convert.ToString(reader[1]);
+            artistSlug.IsPrimary = Convert.ToBoolean(reader[2]);
+            artistSlug.CreatedAt = Convert.ToDateTime(reader[3]);
+            artistSlug.ModifiedAt = reader[4] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader[4]);
+            artistSlug.IsDeleted = Convert.ToBoolean(reader[5]);
+            artistSlug.ArtistId = Convert.ToInt32(reader[6]);
+          }
+        }
+        catch (Exception ex)
+        {
+          Console.WriteLine(ex.Message);
+
+          throw;
+        }
+      }
+
+      return artistSlug;
+    }
+
     public async Task AddNewArtistSlugAsync(ArtistSlugCreateViewModel artistSlug)
     {
       if (artistSlug.IsPrimary)
@@ -72,9 +113,13 @@
       using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
       {
         NpgsqlCommand command = new NpgsqlCommand(sqlStatement, connection);
-        command.Parameters.AddWithValue("@name", artistSlug.Name);
+
+        string name = artistSlug.Name.NormalizeStringForUrl();
+        DateTime createdAt = DateTime.UtcNow;
+
+        command.Parameters.AddWithValue("@name", name);
         command.Parameters.AddWithValue("@is_primary", artistSlug.IsPrimary);
-        command.Parameters.AddWithValue("@created_at", artistSlug.CreatedAt);
+        command.Parameters.AddWithValue("@created_at", createdAt);
         command.Parameters.AddWithValue("@is_deleted", artistSlug.IsDeleted);
         command.Parameters.AddWithValue("@artist_id", artistSlug.ArtistId);
 
@@ -86,6 +131,45 @@
         catch (Exception ex)
         {
           Console.WriteLine(ex.Message);
+        }
+      }
+    }
+
+    public async Task EditArtistSlugAsync(ArtistSlugEditViewModel editedArtistSlug)
+    {
+      if (editedArtistSlug.IsPrimary)
+      {
+        await MarkIsPrimaryAsFalseForAllArtistSlugs(editedArtistSlug.ArtistId);
+      }
+
+      string connectionString = _databaseOptions.ConnectionString;
+      string sqlStatement = "update artist_slugs set name = @name, is_primary = @is_primary, modified_at = @modified_at, is_deleted = @is_deleted where id = @id";
+
+      using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+      {
+        NpgsqlCommand command = new NpgsqlCommand(sqlStatement, connection);
+
+        string name = editedArtistSlug.Name.NormalizeStringForUrl();
+        bool isPrimary = editedArtistSlug.IsPrimary;
+        DateTime modifiedAt = DateTime.UtcNow;
+        bool isDeleted = editedArtistSlug.IsDeleted;
+
+        command.Parameters.AddWithValue("@id", editedArtistSlug.Id);
+        command.Parameters.AddWithValue("@name", name);
+        command.Parameters.AddWithValue("@is_primary", isPrimary);
+        command.Parameters.AddWithValue("@modified_at", modifiedAt);
+        command.Parameters.AddWithValue("@is_deleted", isDeleted);
+
+        try
+        {
+          await connection.OpenAsync();
+          await command.ExecuteNonQueryAsync();
+        }
+        catch (Exception ex)
+        {
+          Console.WriteLine(ex.Message);
+
+          throw;
         }
       }
     }

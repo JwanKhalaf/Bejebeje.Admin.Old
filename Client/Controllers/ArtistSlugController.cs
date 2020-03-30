@@ -1,11 +1,10 @@
-﻿using System;
-
-namespace Client.Controllers
+﻿namespace Client.Controllers
 {
   using Microsoft.AspNetCore.Mvc;
   using Services;
   using System.Threading.Tasks;
   using ViewModels.ArtistSlug;
+  using System;
 
   public class ArtistSlugController : Controller
   {
@@ -31,13 +30,35 @@ namespace Client.Controllers
       {
         await _artistSlugService.AddNewArtistSlugAsync(artistSlug);
 
-        return RedirectToAction("Details", "Artist", new {id = artistSlug.ArtistId});
+        return RedirectToAction("Details", "Artist", new { id = artistSlug.ArtistId });
       }
       catch (Exception exception)
       {
         Console.WriteLine(exception);
         throw;
       }
+    }
+
+    public async Task<IActionResult> Edit(int id)
+    {
+      ArtistSlugViewModel artistSlug = await _artistSlugService.GetArtistSlugByIdAsync(id);
+
+      ArtistSlugEditViewModel viewModel = new ArtistSlugEditViewModel();
+      viewModel.Id = artistSlug.Id;
+      viewModel.Name = artistSlug.Name;
+      viewModel.IsPrimary = artistSlug.IsPrimary;
+      viewModel.IsDeleted = artistSlug.IsDeleted;
+      viewModel.ArtistId = artistSlug.ArtistId;
+
+      return View(viewModel);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Edit(ArtistSlugEditViewModel editedArtistSlug)
+    {
+      await _artistSlugService.EditArtistSlugAsync(editedArtistSlug);
+
+      return RedirectToAction("Details", "Artist", new { id = editedArtistSlug.ArtistId });
     }
   }
 }

@@ -1,4 +1,4 @@
-﻿@model ViewModels.Artist.ArtistViewModel
+﻿@model ViewModels.Artist.ArtistDetailsViewModel
 @using Common
 
 @{
@@ -6,76 +6,120 @@
 }
 
 <div class="heading">
-  <h1>@Model.FullName.ToTitleCase() details</h1>
+  <h1>@Model.Artist.FullName.ToTitleCase() details</h1>
 
   <div>
-    @Html.ActionLink("Edit artist", "Edit", new { id = @Model.Id }, new { @class = "btn btn-sm btn-warning" })
-    @Html.ActionLink("See Lyrics", "Index", "Lyric", new { artistId = Model.Id }, new { @class = "btn btn-sm btn-primary" })
-    @Html.ActionLink("Add new slug", "Create", "ArtistSlug", new { artistId = Model.Id }, new { @class = "btn btn-sm btn-primary" })
+    @Html.ActionLink("Edit artist", "Edit", new { id = @Model.Artist.Id }, new { @class = "btn btn-sm btn-warning" })
+    @Html.ActionLink("See Lyrics", "Index", "Lyric", new { artistId = Model.Artist.Id }, new { @class = "btn btn-sm btn-primary" })
   </div>
 </div>
 
 <div>
   <dl class="row">
     <dt class="col-sm-2">
-      @Html.DisplayNameFor(model => model.Id)
+      @Html.DisplayNameFor(model => model.Artist.Id)
     </dt>
     <dd class="col-sm-10">
-      @Html.DisplayFor(model => model.Id)
+      @Html.DisplayFor(model => model.Artist.Id)
     </dd>
     <dt class="col-sm-2">
-      @Html.DisplayNameFor(model => model.FirstName)
+      @Html.DisplayNameFor(model => model.Artist.FirstName)
     </dt>
     <dd class="col-sm-10">
-      @Html.DisplayFor(model => model.FirstName)
+      @Html.DisplayFor(model => model.Artist.FirstName)
     </dd>
     <dt class="col-sm-2">
-      @Html.DisplayNameFor(model => model.LastName)
+      @Html.DisplayNameFor(model => model.Artist.LastName)
     </dt>
     <dd class="col-sm-10">
-      @Html.DisplayFor(model => model.LastName)
+      @Html.DisplayFor(model => model.Artist.LastName)
     </dd>
     <dt class="col-sm-2">
-      @Html.DisplayNameFor(model => model.FullName)
+      @Html.DisplayNameFor(model => model.Artist.FullName)
     </dt>
     <dd class="col-sm-10">
-      @Html.DisplayFor(model => model.FullName)
+      @Html.DisplayFor(model => model.Artist.FullName)
     </dd>
     <dt class="col-sm-2">
-      @Html.DisplayNameFor(model => model.IsApproved)
+      @Html.DisplayNameFor(model => model.Artist.IsApproved)
     </dt>
     <dd class="col-sm-10">
-      @Model.IsApproved.ToYesOrNo()
+      @Model.Artist.IsApproved.ToYesOrNo()
     </dd>
     <dt class="col-sm-2">
-      @Html.DisplayNameFor(model => model.UserId)
+      @Html.DisplayNameFor(model => model.Artist.UserId)
     </dt>
     <dd class="col-sm-10">
-      @Html.DisplayFor(model => model.UserId)
+      @Html.DisplayFor(model => model.Artist.UserId)
     </dd>
     <dt class="col-sm-2">
-      @Html.DisplayNameFor(model => model.CreatedAt)
+      @Html.DisplayNameFor(model => model.Artist.CreatedAt)
     </dt>
     <dd class="col-sm-10">
-      @Model.CreatedAt.ToString("dd MMM yyyy hh:mm:ss")
+      @Model.Artist.CreatedAt.ToString("dd MMM yyyy hh:mm:ss")
     </dd>
     <dt class="col-sm-2">
-      @Html.DisplayNameFor(model => model.ModifiedAt)
+      @Html.DisplayNameFor(model => model.Artist.ModifiedAt)
     </dt>
     <dd class="col-sm-10">
-      @if (Model.ModifiedAt.HasValue)
+      @if (Model.Artist.ModifiedAt.HasValue)
       {
-        @Model.ModifiedAt.Value.ToString("dd MMM yyyy hh:mm:ss")
+        @Model.Artist.ModifiedAt.Value.ToString("dd MMM yyyy hh:mm:ss")
       }
     </dd>
     <dt class="col-sm-2">
-      @Html.DisplayNameFor(model => model.IsDeleted)
+      @Html.DisplayNameFor(model => model.Artist.IsDeleted)
     </dt>
     <dd class="col-sm-10">
-      @Model.IsDeleted.ToYesOrNo()
+      @Model.Artist.IsDeleted.ToYesOrNo()
     </dd>
   </dl>
 </div>
+
+<div class="heading">
+  <h2>Slugs</h2>
+
+  <div>
+    @Html.ActionLink("Add new slug", "Create", "ArtistSlug", new { artistId = Model.Artist.Id }, new { @class = "btn btn-sm btn-primary" })
+  </div>
+</div>
+
 <div>
-  <a asp-action="Index">Back to List</a>
+  <table class="table">
+    <thead>
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Name</th>
+      <th scope="col">Is primary?</th>
+      <th scope="col">Created at</th>
+      <th scope="col">Modified at</th>
+      <th></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    @foreach (var slug in Model.Slugs)
+    {
+      <tr>
+        <td>@slug.Id</td>
+        <td>@slug.Name</td>
+        <td>@slug.IsPrimary.ToYesOrNo()</td>
+        <td>@slug.CreatedAt.ToString("dd MMM yyyy hh:mm:ss")</td>
+        <td>
+          @if (slug.ModifiedAt.HasValue)
+          {
+            @slug.ModifiedAt.Value.ToString("dd MMM yyyy hh:mm:ss")
+          }
+        </td>
+        <td style="text-align: right">
+          @Html.ActionLink("Edit", "Edit", "ArtistSlug", new { id = slug.Id })
+        </td>
+      </tr>
+    }
+    </tbody>
+  </table>
+</div>
+
+<div>
+  <a asp-action="Index">Back to artists</a>
 </div>

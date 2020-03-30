@@ -8,7 +8,11 @@
   {
     Task<IEnumerable<ArtistSlugViewModel>> GetSlugsForArtistAsync(int artistId);
 
+    Task<ArtistSlugViewModel> GetArtistSlugByIdAsync(int id);
+
     Task AddNewArtistSlugAsync(ArtistSlugCreateViewModel artistSlug);
+
+    Task EditArtistSlugAsync(ArtistSlugEditViewModel editedArtistSlug);
 
     Task MarkIsPrimaryAsFalseForAllArtistSlugs(int artistId);
 

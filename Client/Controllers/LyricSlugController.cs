@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Services;
-using System;
-using System.Threading.Tasks;
-using ViewModels.LyricSlug;
-
-namespace Client.Controllers
+﻿namespace Client.Controllers
 {
+  using Microsoft.AspNetCore.Mvc;
+  using Services;
+  using System;
+  using System.Threading.Tasks;
+  using ViewModels.LyricSlug;
+
   public class LyricSlugController : Controller
   {
     private readonly ILyricSlugService _lyricSlugService;
