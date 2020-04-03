@@ -5,16 +5,15 @@
   ViewData["Title"] = "Details";
 }
 
-<div class="heading">
+<div class="heading mb-5">
   <h1>@Model.Lyric.Title by @Model.Artist.FullName.ToTitleCase()</h1>
 
   <div>
-    @Html.ActionLink("Add new lyric slug", "Create", "LyricSlug", new { lyricId = Model.Lyric.Id }, new { @class = "btn btn-sm btn-primary" })
     @Html.ActionLink("Edit Lyric", "Edit", "Lyric", new { id = Model.Lyric.Id }, new { @class = "btn btn-sm btn-warning" })
   </div>
 </div>
 
-<div>
+<div class="mb-5">
   <dl class="row">
     <dt class="col-sm-2">
       @Html.DisplayNameFor(model => model.Lyric.Id)
@@ -80,4 +79,48 @@
       @Html.DisplayFor(model => model.Lyric.AuthorId)
     </dd>
   </dl>
+</div>
+
+<div class="heading mb-4">
+  <h2>Slugs</h2>
+
+  <div>
+    @Html.ActionLink("Add new slug", "Create", "LyricSlug", new { lyricId = Model.Lyric.Id }, new { @class = "btn btn-sm btn-primary" })
+  </div>
+</div>
+
+<div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Name</th>
+        <th scope="col">Is primary?</th>
+        <th scope="col">Created at</th>
+        <th scope="col">Modified at</th>
+        <th></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @foreach (var slug in Model.Slugs)
+      {
+        <tr>
+          <td>@slug.Id</td>
+          <td>@slug.Name</td>
+          <td>@slug.IsPrimary.ToYesOrNo()</td>
+          <td>@slug.CreatedAt.ToString("dd MMM yyyy hh:mm:ss")</td>
+          <td>
+            @if (slug.ModifiedAt.HasValue)
+            {
+              @slug.ModifiedAt.Value.ToString("dd MMM yyyy hh:mm:ss")
+            }
+          </td>
+          <td style="text-align: right">
+            @Html.ActionLink("Edit", "Edit", "LyricSlug", new { id = slug.Id })
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
 </div>

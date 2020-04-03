@@ -1,4 +1,6 @@
-﻿using ViewModels.Artist;
+﻿using System.Collections.Generic;
+using ViewModels.Artist;
+using ViewModels.LyricSlug;
 
 namespace ViewModels.Lyric
 {
@@ -7,5 +9,7 @@ namespace ViewModels.Lyric
     public LyricViewModel Lyric { get; set; }
 
     public ArtistViewModel Artist { get; set; }
+
+    public IEnumerable<LyricSlugViewModel> Slugs { get; set; }
   }
 }

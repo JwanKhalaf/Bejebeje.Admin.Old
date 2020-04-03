@@ -1,4 +1,7 @@
-﻿namespace Client.Controllers
+﻿using System.Collections.Generic;
+using ViewModels.LyricSlug;
+
+namespace Client.Controllers
 {
   using Microsoft.AspNetCore.Mvc;
   using Services;
@@ -12,12 +15,16 @@
 
     private readonly ILyricService _lyricService;
 
+    private readonly ILyricSlugService _lyricSlugService;
+
     public LyricController(
       IArtistService artistService,
-      ILyricService lyricService)
+      ILyricService lyricService,
+      ILyricSlugService lyricSlugService)
     {
       _artistService = artistService;
       _lyricService = lyricService;
+      _lyricSlugService = lyricSlugService;
     }
 
     public async Task<IActionResult> Index([FromQuery] int artistId)
@@ -33,9 +40,12 @@
 
       ArtistViewModel artist = await _artistService.GetArtistByIdAsync(lyric.ArtistId);
 
+      IEnumerable<LyricSlugViewModel> slugs = await _lyricSlugService.GetSlugsForLyricAsync(lyric.Id);
+
       LyricDetailsViewModel viewModel = new LyricDetailsViewModel();
       viewModel.Lyric = lyric;
       viewModel.Artist = artist;
+      viewModel.Slugs = slugs;
 
       return View(viewModel);
     }

@@ -1,18 +1,21 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace ViewModels.LyricSlug
+﻿namespace ViewModels.LyricSlug
 {
-  public class LyricSlugCreateViewModel
+  using System.ComponentModel.DataAnnotations;
+
+  public class LyricSlugEditViewModel
   {
+    [Required]
+    public int Id { get; set; }
+
     [Required]
     public string Name { get; set; }
 
+    [Required]
     [Display (Name = "Is primary?")]
     public bool IsPrimary { get; set; }
 
-    public DateTime CreatedAt { get; set; }
-
+    [Required]
+    [Display(Name = "Is deleted?")]
     public bool IsDeleted { get; set; }
 
     [Required]

@@ -35,11 +35,34 @@
 
         return RedirectToAction("Details", "Lyric", new { id = lyricSlug.LyricId });
       }
-      catch (Exception)
+      catch (Exception exception)
       {
+        Console.WriteLine(exception.Message);
 
         throw;
       }
+    }
+
+    public async Task<IActionResult> Edit(int id)
+    {
+      LyricSlugViewModel slug = await _lyricSlugService.GetSlugByIdAsync(id);
+
+      LyricSlugEditViewModel viewModel = new LyricSlugEditViewModel();
+      viewModel.Id = id;
+      viewModel.LyricId = slug.LyricId;
+      viewModel.IsPrimary = slug.IsPrimary;
+      viewModel.IsDeleted = slug.IsDeleted;
+      viewModel.Name = slug.Name;
+      
+      return View(viewModel);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Edit(LyricSlugEditViewModel editedLyricSlug)
+    {
+      await _lyricSlugService.EditLyricSlugAsync(editedLyricSlug);
+
+      return RedirectToAction("Details", "Lyric", new { id = editedLyricSlug.LyricId });
     }
   }
 }

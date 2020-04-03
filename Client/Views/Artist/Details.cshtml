@@ -5,7 +5,7 @@
   ViewData["Title"] = "Artist details";
 }
 
-<div class="heading">
+<div class="heading mb-5">
   <h1>@Model.Artist.FullName.ToTitleCase() details</h1>
 
   <div>
@@ -14,7 +14,7 @@
   </div>
 </div>
 
-<div>
+<div class="mb-5">
   <dl class="row">
     <dt class="col-sm-2">
       @Html.DisplayNameFor(model => model.Artist.Id)
@@ -76,7 +76,7 @@
   </dl>
 </div>
 
-<div class="heading">
+<div class="heading mb-4">
   <h2>Slugs</h2>
 
   <div>
