@@ -31,5 +31,7 @@ namespace ViewModels.Artist
     
     [Display(Name = "Is deleted?")]
     public bool IsDeleted { get; set; }
+
+    public bool HasImage { get; set; }
   }
 }

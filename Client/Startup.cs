@@ -1,4 +1,4 @@
-namespace Bejebeje.Client
+namespace Client
 {
   using Microsoft.AspNetCore.Builder;
   using Microsoft.AspNetCore.Hosting;
@@ -23,6 +23,7 @@ namespace Bejebeje.Client
       services.AddScoped<IArtistSlugService, ArtistSlugService>();
       services.AddScoped<ILyricService, LyricService>();
       services.AddScoped<ILyricSlugService, LyricSlugService>();
+      services.AddScoped<IArtistImageService, ArtistImageService>();
       services.Configure<DatabaseOptions>(Configuration);
       services
         .AddControllersWithViews()
@@ -52,7 +53,7 @@ namespace Bejebeje.Client
       {
         endpoints.MapControllerRoute(
                   name: "default",
-                  pattern: "{controller=Home}/{action=Index}/{id?}");
+                  pattern: "{controller=Artist}/{action=Index}/{id?}");
       });
     }
   }

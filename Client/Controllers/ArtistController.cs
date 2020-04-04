@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using ViewModels.ArtistSlug;
-
-namespace Client.Controllers
+﻿namespace Client.Controllers
 {
+  using ViewModels.ArtistSlug;
   using System;
   using Microsoft.AspNetCore.Mvc;
   using Services;

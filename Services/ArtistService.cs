@@ -10,6 +10,7 @@
   using ViewModels.ArtistSlug;
   using System.Linq;
   using ViewModels.Artist;
+  using ViewModels.ArtistImage;
 
   public class ArtistService : IArtistService
   {
@@ -17,12 +18,16 @@
 
     private readonly IArtistSlugService _artistSlugService;
 
+    private readonly IArtistImageService _artistImageService;
+
     public ArtistService(
       IOptionsMonitor<DatabaseOptions> optionsAccessor,
-      IArtistSlugService artistSlugService)
+      IArtistSlugService artistSlugService,
+      IArtistImageService artistImageService)
     {
       _databaseOptions = optionsAccessor.CurrentValue;
       _artistSlugService = artistSlugService;
+      _artistImageService = artistImageService;
     }
 
     public async Task<IEnumerable<ArtistListItemViewModel>> GetArtistsAsync()
@@ -91,11 +96,16 @@
             artist.CreatedAt = Convert.ToDateTime(reader[6]);
             artist.ModifiedAt = reader[7] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader[7]);
             artist.IsDeleted = Convert.ToBoolean(reader[8]);
+
+            ArtistImageReadViewModel image = await _artistImageService.GetImageByArtistIdAsync(artist.Id);
+            artist.HasImage = image != null;
           }
         }
         catch (Exception ex)
         {
           Console.WriteLine(ex.Message);
+
+          throw;
         }
       }
 
