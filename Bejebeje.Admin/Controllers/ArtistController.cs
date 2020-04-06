@@ -2,7 +2,9 @@
 {
   using System;
   using System.Collections.Generic;
+  using System.Security.Claims;
   using System.Threading.Tasks;
+  using Extensions;
   using Microsoft.AspNetCore.Mvc;
   using Services;
   using ViewModels.Artist;
@@ -53,6 +55,8 @@
     [HttpPost]
     public async Task<IActionResult> Create(ArtistViewModel viewModel)
     {
+      string userId = User.GetUserId().ToString();
+      viewModel.UserId = userId;
       int artistId = await _artistService.AddNewArtistAsync(viewModel);
 
       return RedirectToAction("Details", new { id = artistId });

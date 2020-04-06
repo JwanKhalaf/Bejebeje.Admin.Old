@@ -123,7 +123,7 @@
       string fullName = string.IsNullOrEmpty(lastName) ? firstName : $"{firstName} {lastName}";
       bool isApproved = true;
       DateTime createdAt = DateTime.UtcNow;
-      string userId = _databaseOptions.UserId;
+      string userId = artist.UserId;
       bool isDeleted = false;
 
       using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
