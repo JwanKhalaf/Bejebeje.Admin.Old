@@ -1,0 +1,126 @@
+﻿@using Bejebeje.Common
+@model Bejebeje.ViewModels.Lyric.LyricDetailsViewModel
+
+@{
+  ViewData["Title"] = "Details";
+}
+
+<div class="heading mb-5">
+  <h1>@Model.Lyric.Title by @Model.Artist.FullName.ToTitleCase()</h1>
+
+  <div>
+    @Html.ActionLink("Edit Lyric", "Edit", "Lyric", new { id = Model.Lyric.Id }, new { @class = "btn btn-sm btn-warning" })
+  </div>
+</div>
+
+<div class="mb-5">
+  <dl class="row">
+    <dt class="col-sm-2">
+      @Html.DisplayNameFor(model => model.Lyric.Id)
+    </dt>
+    <dd class="col-sm-10">
+      @Html.DisplayFor(model => model.Lyric.Id)
+    </dd>
+    <dt class="col-sm-2">
+      @Html.DisplayNameFor(model => model.Lyric.Title)
+    </dt>
+    <dd class="col-sm-10">
+      @Html.DisplayFor(model => model.Lyric.Title)
+    </dd>
+    <dt class="col-sm-2">
+      @Html.DisplayNameFor(model => model.Lyric.Body)
+    </dt>
+    <dd class="col-sm-10" style="white-space: pre-line;">
+      @Html.DisplayFor(model => model.Lyric.Body)
+    </dd>
+    <dt class="col-sm-2">
+      @Html.DisplayNameFor(model => model.Lyric.UserId)
+    </dt>
+    <dd class="col-sm-10">
+      @Html.DisplayFor(model => model.Lyric.UserId)
+    </dd>
+    <dt class="col-sm-2">
+      @Html.DisplayNameFor(model => model.Lyric.CreatedAt)
+    </dt>
+    <dd class="col-sm-10">
+      @Model.Lyric.CreatedAt.ToString("dd MMM yyyy hh:mm:ss")
+    </dd>
+    <dt class="col-sm-2">
+      @Html.DisplayNameFor(model => model.Lyric.ModifiedAt)
+    </dt>
+    <dd class="col-sm-10">
+      @if (Model.Lyric.ModifiedAt.HasValue)
+      {
+        @Model.Lyric.ModifiedAt.Value.ToString("dd MMM yyyy hh:mm:ss")
+      }
+    </dd>
+    <dt class="col-sm-2">
+      @Html.DisplayNameFor(model => model.Lyric.IsDeleted)
+    </dt>
+    <dd class="col-sm-10">
+      @Model.Lyric.IsDeleted.ToYesOrNo()
+    </dd>
+    <dt class="col-sm-2">
+      @Html.DisplayNameFor(model => model.Lyric.IsApproved)
+    </dt>
+    <dd class="col-sm-10">
+      @Model.Lyric.IsApproved.ToYesOrNo()
+    </dd>
+    <dt class="col-sm-2">
+      @Html.DisplayNameFor(model => model.Lyric.ArtistId)
+    </dt>
+    <dd class="col-sm-10">
+      @Html.DisplayFor(model => model.Lyric.ArtistId)
+    </dd>
+    <dt class="col-sm-2">
+      @Html.DisplayNameFor(model => model.Lyric.AuthorId)
+    </dt>
+    <dd class="col-sm-10">
+      @Html.DisplayFor(model => model.Lyric.AuthorId)
+    </dd>
+  </dl>
+</div>
+
+<div class="heading mb-4">
+  <h2>Slugs</h2>
+
+  <div>
+    @Html.ActionLink("Add new slug", "Create", "LyricSlug", new { lyricId = Model.Lyric.Id }, new { @class = "btn btn-sm btn-primary" })
+  </div>
+</div>
+
+<div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Name</th>
+        <th scope="col">Is primary?</th>
+        <th scope="col">Created at</th>
+        <th scope="col">Modified at</th>
+        <th></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @foreach (var slug in Model.Slugs)
+      {
+        <tr>
+          <td>@slug.Id</td>
+          <td>@slug.Name</td>
+          <td>@slug.IsPrimary.ToYesOrNo()</td>
+          <td>@slug.CreatedAt.ToString("dd MMM yyyy hh:mm:ss")</td>
+          <td>
+            @if (slug.ModifiedAt.HasValue)
+            {
+              @slug.ModifiedAt.Value.ToString("dd MMM yyyy hh:mm:ss")
+            }
+          </td>
+          <td style="text-align: right">
+            @Html.ActionLink("Edit", "Edit", "LyricSlug", new { id = slug.Id })
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
