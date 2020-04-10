@@ -15,4 +15,4 @@ echo "pull latest docker image"
 docker pull bejebeje/admin
 
 echo "cleaning the volume"
-docker run -d -p 5015:5000 --env-file ./variables.env bejebeje/admin
+docker run -d -p 5025:5000 --env-file ./variables.env bejebeje/admin
