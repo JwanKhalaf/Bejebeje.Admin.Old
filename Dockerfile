@@ -17,7 +17,7 @@ RUN dotnet publish Bejebeje.Admin/Bejebeje.Admin.csproj -c Release -o out
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS runtime
 
 # telling the application what port to run on.
-ENV ASPNETCORE_URLS=http://*:5000
+ENV ASPNETCORE_URLS=https://*:443;http://*:5000
 
 # set the working directory for any RUN, CMD, ENTRYPOINT, COPY and ADD
 # instructions that follows the WORKDIR instruction.
