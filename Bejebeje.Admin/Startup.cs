@@ -1,6 +1,7 @@
 namespace Bejebeje.Admin
 {
   using System.IdentityModel.Tokens.Jwt;
+  using System.Net;
   using Microsoft.AspNetCore.Builder;
   using Microsoft.AspNetCore.Hosting;
   using Microsoft.AspNetCore.HttpOverrides;
@@ -62,10 +63,15 @@ namespace Bejebeje.Admin
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-      app.UseForwardedHeaders(new ForwardedHeadersOptions
+      ForwardedHeadersOptions forwardedHeadersOptions = new ForwardedHeadersOptions
       {
         ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-      });
+      };
+
+      forwardedHeadersOptions.KnownNetworks.Clear();
+      forwardedHeadersOptions.KnownProxies.Add(IPAddress.Parse("::ffff:172.17.0.1"));
+
+      app.UseForwardedHeaders(forwardedHeadersOptions);
 
       if (env.IsDevelopment())
       {
