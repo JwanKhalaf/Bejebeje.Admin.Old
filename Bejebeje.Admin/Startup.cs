@@ -62,6 +62,11 @@ namespace Bejebeje.Admin
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+      app.UseForwardedHeaders(new ForwardedHeadersOptions
+      {
+        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+      });
+
       if (env.IsDevelopment())
       {
         app.UseDeveloperExceptionPage();
@@ -72,11 +77,6 @@ namespace Bejebeje.Admin
 
         app.UseHsts();
       }
-
-      app.UseForwardedHeaders(new ForwardedHeadersOptions
-      {
-        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-      });
 
       app.UseHttpsRedirection();
 
