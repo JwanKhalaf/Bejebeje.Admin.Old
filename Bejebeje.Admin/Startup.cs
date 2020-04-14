@@ -69,7 +69,7 @@ namespace Bejebeje.Admin
       };
 
       forwardedHeadersOptions.KnownNetworks.Clear();
-      forwardedHeadersOptions.KnownProxies.Add(IPAddress.Parse("::ffff:172.17.0.1"));
+      forwardedHeadersOptions.KnownProxies.Clear();
 
       app.UseForwardedHeaders(forwardedHeadersOptions);
 
