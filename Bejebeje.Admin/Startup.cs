@@ -55,7 +55,6 @@ namespace Bejebeje.Admin
           options.ClientSecret = clientSecret;
           options.ResponseType = "code";
           options.SaveTokens = true;
-          options.
         });
 
       services
