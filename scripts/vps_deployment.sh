@@ -11,8 +11,11 @@ pwd
 echo "stopping docker container"
 docker stop bejebeje-admin
 
+echo "removing old container"
+docker container rm bejebeje-admin
+
 echo "pull latest docker image"
 docker pull bejebeje/admin
 
-echo "cleaning the volume"
+echo "run latest docker image"
 docker run -d -p 5025:5000 --name bejebeje-admin --env-file ./variables.env bejebeje/admin
