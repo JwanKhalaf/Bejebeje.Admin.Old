@@ -3,9 +3,11 @@ namespace Bejebeje.Admin
   using System.IdentityModel.Tokens.Jwt;
   using Microsoft.AspNetCore.Builder;
   using Microsoft.AspNetCore.Hosting;
+  using Microsoft.AspNetCore.HttpOverrides;
   using Microsoft.Extensions.Configuration;
   using Microsoft.Extensions.DependencyInjection;
   using Microsoft.Extensions.Hosting;
+  using Microsoft.IdentityModel.Logging;
   using Services;
   using Services.Config;
 
@@ -20,6 +22,7 @@ namespace Bejebeje.Admin
 
     public void ConfigureServices(IServiceCollection services)
     {
+      IdentityModelEventSource.ShowPII = true;
       string authority = Configuration["IdentityServerConfiguration:Authority"];
       string clientId = Configuration["IdentityServerConfiguration:ClientId"];
       string clientSecret = Configuration["IdentityServerConfiguration:ClientSecret"];
@@ -61,6 +64,16 @@ namespace Bejebeje.Admin
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+      ForwardedHeadersOptions forwardedHeadersOptions = new ForwardedHeadersOptions
+      {
+        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+      };
+
+      forwardedHeadersOptions.KnownNetworks.Clear();
+      forwardedHeadersOptions.KnownProxies.Clear();
+
+      app.UseForwardedHeaders(forwardedHeadersOptions);
+
       if (env.IsDevelopment())
       {
         app.UseDeveloperExceptionPage();
