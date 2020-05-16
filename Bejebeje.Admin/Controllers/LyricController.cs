@@ -2,6 +2,7 @@
 {
   using System.Collections.Generic;
   using System.Threading.Tasks;
+  using Extensions;
   using Microsoft.AspNetCore.Mvc;
   using Services;
   using ViewModels.Artist;
@@ -47,6 +48,25 @@
       viewModel.Slugs = slugs;
 
       return View(viewModel);
+    }
+
+    public IActionResult Create(int artistId)
+    {
+      LyricCreateViewModel viewModel = new LyricCreateViewModel();
+      viewModel.ArtistId = artistId;
+
+      return View(viewModel);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(LyricCreateViewModel newLyric)
+    {
+      string userId = User.GetUserId().ToString();
+      newLyric.UserId = userId;
+
+      int lyricId = await _lyricService.AddLyricAsync(newLyric);
+
+      return RedirectToAction("Details", new { id = lyricId });
     }
 
     public async Task<IActionResult> Edit(int id)

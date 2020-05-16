@@ -28,7 +28,7 @@
     {
       try
       {
-        await _artistSlugService.AddNewArtistSlugAsync(artistSlug);
+        await _artistSlugService.AddArtistSlugAsync(artistSlug);
 
         return RedirectToAction("Details", "Artist", new { id = artistSlug.ArtistId });
       }

@@ -99,7 +99,7 @@
       return image;
     }
 
-    public async Task AddNewArtistImageAsync(ArtistImageCreateViewModel artistImage)
+    public async Task AddArtistImageAsync(ArtistImageCreateViewModel artistImage)
     {
       if (artistImage.File.Length > 0)
       {

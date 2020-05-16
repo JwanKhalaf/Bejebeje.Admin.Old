@@ -56,7 +56,7 @@
     {
       string userId = User.GetUserId().ToString();
       viewModel.UserId = userId;
-      int artistId = await _artistService.AddNewArtistAsync(viewModel);
+      int artistId = await _artistService.AddArtistAsync(viewModel);
 
       return RedirectToAction("Details", new { id = artistId });
     }

@@ -112,7 +112,7 @@
       return artist;
     }
 
-    public async Task<int> AddNewArtistAsync(ArtistViewModel artist)
+    public async Task<int> AddArtistAsync(ArtistViewModel artist)
     {
       string connectionString = _databaseOptions.ConnectionString;
       string sqlStatement = "insert into artists (first_name, last_name, full_name, is_approved, user_id, created_at, is_deleted) values (@first_name, @last_name, @full_name, @is_approved, @user_id, @created_at, @is_deleted) returning id";
@@ -150,7 +150,7 @@
           artistSlug.CreatedAt = createdAt;
           artistSlug.ArtistId = artistId;
 
-          await _artistSlugService.AddNewArtistSlugAsync(artistSlug);
+          await _artistSlugService.AddArtistSlugAsync(artistSlug);
         }
         catch (Exception ex)
         {
@@ -191,7 +191,7 @@
         newArtistSlug.IsPrimary = true;
         newArtistSlug.ArtistId = editedArtist.Id;
 
-        await _artistSlugService.AddNewArtistSlugAsync(newArtistSlug);
+        await _artistSlugService.AddArtistSlugAsync(newArtistSlug);
       }
       else
       {

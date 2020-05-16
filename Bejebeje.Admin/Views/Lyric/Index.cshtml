@@ -2,16 +2,16 @@
 @model Bejebeje.ViewModels.Lyric.ArtistLyricsViewModel
 
 @{
-    ViewData["Title"] = "Index";
+  ViewData["Title"] = "Artist lyrics";
 }
 
-  <div class="heading mb-5">
-    <h1>@Model.Artist.FullName.ToTitleCase() lyrics</h1>
+<div class="heading mb-5">
+  <h1>@Model.Artist.FullName.ToTitleCase() lyrics</h1>
 
-    <div>
-      @Html.ActionLink("Add new lyric", "Create", "Artist", null, new { @class = "btn btn-sm btn-primary" })
-    </div>
+  <div>
+    @Html.ActionLink("Add new lyric", "Create", "Lyric", new { artistId = Model.Artist.Id }, new { @class = "btn btn-sm btn-primary" })
   </div>
+</div>
 
 <table class="table">
   <thead>

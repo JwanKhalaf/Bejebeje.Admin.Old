@@ -31,7 +31,7 @@
         lyricSlug.CreatedAt = DateTime.UtcNow;
         lyricSlug.IsDeleted = false;
 
-        await _lyricSlugService.AddNewLyricSlugAsync(lyricSlug);
+        await _lyricSlugService.AddLyricSlugAsync(lyricSlug);
 
         return RedirectToAction("Details", "Lyric", new { id = lyricSlug.LyricId });
       }
