@@ -100,7 +100,7 @@
       return artistSlug;
     }
 
-    public async Task AddNewArtistSlugAsync(ArtistSlugCreateViewModel artistSlug)
+    public async Task AddArtistSlugAsync(ArtistSlugCreateViewModel artistSlug)
     {
       if (artistSlug.IsPrimary)
       {

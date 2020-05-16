@@ -55,7 +55,7 @@
     [HttpPost]
     public async Task<IActionResult> Create(ArtistImageCreateViewModel image)
     {
-      await _artistImageService.AddNewArtistImageAsync(image);
+      await _artistImageService.AddArtistImageAsync(image);
 
       return RedirectToAction("Details", "Artist", new { id = image.ArtistId });
     }

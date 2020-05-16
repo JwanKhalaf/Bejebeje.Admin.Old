@@ -119,6 +119,57 @@
       return model;
     }
 
+    public async Task<int> AddLyricAsync(LyricCreateViewModel newLyric)
+    {
+      string connectionString = _databaseOptions.ConnectionString;
+      string sqlStatement = "insert into lyrics (title, body, user_id, created_at, is_deleted, is_approved, artist_id) values (@title, @body, @user_id, @created_at, @is_deleted, @is_approved, @artist_id) returning id";
+      int lyricId = 0;
+
+      using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+      {
+        NpgsqlCommand command = new NpgsqlCommand(sqlStatement, connection);
+
+        string title = newLyric.Title.ToLower().ToTitleCase();
+        string body = newLyric.Body;
+        string userId = newLyric.UserId;
+        DateTime createdAt = DateTime.UtcNow;
+        bool isDeleted = false;
+        bool isApproved = true;
+        int artistId = newLyric.ArtistId;
+
+        command.Parameters.AddWithValue("@title", title);
+        command.Parameters.AddWithValue("@body", body);
+        command.Parameters.AddWithValue("@user_id", userId);
+        command.Parameters.AddWithValue("@created_at", createdAt);
+        command.Parameters.AddWithValue("@is_deleted", isDeleted);
+        command.Parameters.AddWithValue("@is_approved", isApproved);
+        command.Parameters.AddWithValue("@artist_id", artistId);
+
+        try
+        {
+          await connection.OpenAsync();
+
+          object lyricIdentity = command.ExecuteScalar();
+          lyricId = (int)lyricIdentity;
+
+          LyricSlugCreateViewModel lyricSlug = new LyricSlugCreateViewModel();
+          lyricSlug.Name = title.NormalizeStringForUrl();
+          lyricSlug.IsPrimary = true;
+          lyricSlug.IsDeleted = false;
+          lyricSlug.CreatedAt = createdAt;
+          lyricSlug.LyricId = lyricId;
+
+          await _lyricSlugService.AddLyricSlugAsync(lyricSlug);
+        }
+        catch (Exception ex)
+        {
+          Console.WriteLine(ex.Message);
+        }
+      }
+
+      return lyricId;
+    }
+
     public async Task EditLyricAsync(LyricEditViewModel editedLyric)
     {
       IEnumerable<LyricSlugViewModel> lyricSlugs = await _lyricSlugService.GetSlugsForLyricAsync(editedLyric.Id);

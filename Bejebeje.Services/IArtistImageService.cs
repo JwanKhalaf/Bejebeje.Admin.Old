@@ -9,7 +9,7 @@
 
     Task<ArtistImageReadViewModel> GetImageByArtistIdAsync(int id);
 
-    Task AddNewArtistImageAsync(ArtistImageCreateViewModel artistImage);
+    Task AddArtistImageAsync(ArtistImageCreateViewModel artistImage);
 
     Task EditArtistImageAsync(ArtistImageEditViewModel artistImage);
 

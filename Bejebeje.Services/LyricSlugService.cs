@@ -97,7 +97,7 @@
       return lyricSlugs;
     }
 
-    public async Task<int> AddNewLyricSlugAsync(LyricSlugCreateViewModel newLyricSlug)
+    public async Task<int> AddLyricSlugAsync(LyricSlugCreateViewModel newLyricSlug)
     {
       string connectionString = _databaseOptions.ConnectionString;
 

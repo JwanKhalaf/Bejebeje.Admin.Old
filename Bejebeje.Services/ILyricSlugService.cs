@@ -10,7 +10,7 @@
 
     Task<IEnumerable<LyricSlugViewModel>> GetSlugsForLyricAsync(int lyricId);
 
-    Task<int> AddNewLyricSlugAsync(LyricSlugCreateViewModel newLyricSlug);
+    Task<int> AddLyricSlugAsync(LyricSlugCreateViewModel newLyricSlug);
 
     Task EditLyricSlugAsync(LyricSlugEditViewModel editedLyricSlug);
 

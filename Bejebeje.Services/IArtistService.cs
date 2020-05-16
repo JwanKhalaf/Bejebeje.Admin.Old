@@ -10,7 +10,7 @@
     
     Task<ArtistViewModel> GetArtistByIdAsync(int id);
 
-    Task<int> AddNewArtistAsync(ArtistViewModel artist);
+    Task<int> AddArtistAsync(ArtistViewModel artist);
 
     Task EditArtistAsync(ArtistEditViewModel editedArtist);
   }
