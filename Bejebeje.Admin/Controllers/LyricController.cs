@@ -3,12 +3,14 @@
   using System.Collections.Generic;
   using System.Threading.Tasks;
   using Extensions;
+  using Microsoft.AspNetCore.Authorization;
   using Microsoft.AspNetCore.Mvc;
   using Services;
   using ViewModels.Artist;
   using ViewModels.Lyric;
   using ViewModels.LyricSlug;
 
+  [Authorize(Roles = "moderator,administrator")]
   public class LyricController : Controller
   {
     private readonly IArtistService _artistService;

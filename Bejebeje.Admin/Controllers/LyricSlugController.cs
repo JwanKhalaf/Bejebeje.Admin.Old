@@ -2,10 +2,12 @@
 {
   using System;
   using System.Threading.Tasks;
+  using Microsoft.AspNetCore.Authorization;
   using Microsoft.AspNetCore.Mvc;
   using Services;
   using ViewModels.LyricSlug;
 
+  [Authorize(Roles = "moderator,administrator")]
   public class LyricSlugController : Controller
   {
     private readonly ILyricSlugService _lyricSlugService;
