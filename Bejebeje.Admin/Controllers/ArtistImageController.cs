@@ -2,10 +2,12 @@
 {
   using System.IO;
   using System.Threading.Tasks;
+  using Microsoft.AspNetCore.Authorization;
   using Microsoft.AspNetCore.Mvc;
   using Services;
   using ViewModels.ArtistImage;
 
+  [Authorize(Roles = "moderator,administrator")]
   public class ArtistImageController : Controller
   {
     private readonly IArtistImageService _artistImageService;
