@@ -1,6 +1,7 @@
 namespace Bejebeje.Admin
 {
   using System.IdentityModel.Tokens.Jwt;
+  using Microsoft.AspNetCore.Authentication;
   using Microsoft.AspNetCore.Builder;
   using Microsoft.AspNetCore.Hosting;
   using Microsoft.AspNetCore.HttpOverrides;
@@ -8,6 +9,7 @@ namespace Bejebeje.Admin
   using Microsoft.Extensions.DependencyInjection;
   using Microsoft.Extensions.Hosting;
   using Microsoft.IdentityModel.Logging;
+  using Microsoft.IdentityModel.Tokens;
   using Services;
   using Services.Config;
 
@@ -41,6 +43,8 @@ namespace Bejebeje.Admin
 
       JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
+      JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
       services.AddAuthentication(options =>
         {
           options.DefaultScheme = "Cookies";
@@ -55,6 +59,11 @@ namespace Bejebeje.Admin
           options.ClientSecret = clientSecret;
           options.ResponseType = "code";
           options.SaveTokens = true;
+          options.GetClaimsFromUserInfoEndpoint = true;
+          options.Scope.Clear();
+          options.Scope.Add("openid");
+          options.ClaimActions.MapUniqueJsonKey("role", "role");
+          options.TokenValidationParameters = new TokenValidationParameters { RoleClaimType = "role" };
         });
 
       services

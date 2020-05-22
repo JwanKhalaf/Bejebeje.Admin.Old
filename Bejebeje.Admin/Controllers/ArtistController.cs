@@ -4,11 +4,13 @@
   using System.Collections.Generic;
   using System.Threading.Tasks;
   using Extensions;
+  using Microsoft.AspNetCore.Authorization;
   using Microsoft.AspNetCore.Mvc;
   using Services;
   using ViewModels.Artist;
   using ViewModels.ArtistSlug;
 
+  [Authorize(Roles = "moderator,administrator")]
   public class ArtistController : Controller
   {
     private readonly IArtistService _artistService;
