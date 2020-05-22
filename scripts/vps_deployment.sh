@@ -18,4 +18,4 @@ echo "pull latest docker image"
 docker pull bejebeje/admin
 
 echo "run latest docker image"
-docker run -d -p 5025:5000 --name bejebeje-admin --env-file ./variables.env bejebeje/admin
+docker run -d -p 5025:5000 --name bejebeje-admin --network bejebeje_net --env-file ./variables.env bejebeje/admin
