@@ -1,7 +1,10 @@
 namespace Bejebeje.Admin
 {
+  using System;
+  using System.Net;
   using Microsoft.AspNetCore.Hosting;
   using Microsoft.Extensions.Hosting;
+  using Sentry;
 
   public class Program
   {
@@ -14,7 +17,18 @@ namespace Bejebeje.Admin
         Host.CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webBuilder =>
             {
-              webBuilder.UseStartup<Startup>();
+              webBuilder
+                .UseStartup<Startup>()
+                .UseSentry(options =>
+                {
+                  options.Release = "1";
+                  options.MaxBreadcrumbs = 200;
+                  options.HttpProxy = null;
+                  options.DecompressionMethods = DecompressionMethods.None;
+                  options.MaxQueueItems = 100;
+                  options.ShutdownTimeout = TimeSpan.FromSeconds(5);
+                  options.ConfigureScope(s => s.SetTag("Always sent", "this tag"));
+                });
             });
   }
 }
