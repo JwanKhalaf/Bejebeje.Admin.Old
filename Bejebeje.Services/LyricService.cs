@@ -175,11 +175,12 @@
       IEnumerable<LyricSlugViewModel> lyricSlugs = await _lyricSlugService.GetSlugsForLyricAsync(editedLyric.Id);
 
       string updatedSlug = editedLyric.Title.NormalizeStringForUrl();
+      DateTime modifiedAt = DateTime.UtcNow;
 
       bool slugDoesNotExistAlready = lyricSlugs.All(s => s.Name != updatedSlug);
 
       string connectionString = _databaseOptions.ConnectionString;
-      string sqlStatementToUpdateLyric = "update lyrics set title = @title, body = @body where id = @id";
+      string sqlStatementToUpdateLyric = "update lyrics set title = @title, body = @body, modified_at = @modified_at where id = @id";
 
       using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
       {
@@ -187,12 +188,13 @@
         command.Parameters.AddWithValue("@id", editedLyric.Id);
         command.Parameters.AddWithValue("@title", editedLyric.Title);
         command.Parameters.AddWithValue("@body", editedLyric.Body);
+        command.Parameters.AddWithValue("modified_at", modifiedAt);
 
         try
         {
           await connection.OpenAsync();
 
-          NpgsqlDataReader reader = await command.ExecuteReaderAsync();
+          await command.ExecuteNonQueryAsync();
         }
         catch (Exception ex)
         {
@@ -224,7 +226,7 @@
           {
             await connection.OpenAsync();
 
-            NpgsqlDataReader reader = await command.ExecuteReaderAsync();
+            await command.ExecuteNonQueryAsync();
           }
           catch (Exception ex)
           {
