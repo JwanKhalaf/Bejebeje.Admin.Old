@@ -9,6 +9,8 @@
   <h1>@Model.Artist.FullName.ToTitleCase() lyrics</h1>
 
   <div>
+    @Html.ActionLink($"{Model.Artist.FullName.ToTitleCase()} details", "Details", "Artist", new { id = Model.Artist.Id }, new { @class = "btn btn-sm btn-warning" })
+
     @Html.ActionLink("Add new lyric", "Create", "Lyric", new { artistId = Model.Artist.Id }, new { @class = "btn btn-sm btn-primary" })
   </div>
 </div>
