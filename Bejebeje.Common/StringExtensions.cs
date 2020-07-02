@@ -49,5 +49,25 @@
     {
       return _textInfo.ToTitleCase(value);
     }
+
+    public static string ToSentenceCase(this string name)
+    {
+      string value;
+
+      if (name.Length == 0)
+      {
+        value = name;
+      }
+      else if (name.Length == 1)
+      {
+        value = Convert.ToString(char.ToUpper(name[0]));
+      }
+      else
+      {
+        value = char.ToUpper(name[0]) + name.Substring(1);
+      }
+
+      return value;
+    }
   }
 }

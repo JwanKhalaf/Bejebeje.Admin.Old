@@ -129,7 +129,7 @@
       {
         NpgsqlCommand command = new NpgsqlCommand(sqlStatement, connection);
 
-        string title = newLyric.Title.ToLower().ToTitleCase();
+        string title = newLyric.Title.ToLower().ToSentenceCase();
         string body = newLyric.Body;
         string userId = newLyric.UserId;
         DateTime createdAt = DateTime.UtcNow;
