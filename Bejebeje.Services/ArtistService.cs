@@ -115,7 +115,7 @@
     public async Task<int> AddArtistAsync(ArtistViewModel artist)
     {
       string connectionString = _databaseOptions.ConnectionString;
-      string sqlStatement = "insert into artists (first_name, last_name, full_name, is_approved, user_id, created_at, is_deleted) values (@first_name, @last_name, @full_name, @is_approved, @user_id, @created_at, @is_deleted) returning id";
+      string sqlStatement = "insert into artists (first_name, last_name, full_name, is_approved, user_id, created_at, is_deleted, has_image) values (@first_name, @last_name, @full_name, @is_approved, @user_id, @created_at, @is_deleted, @has_image) returning id";
       int artistId = 0;
 
       string firstName = artist.FirstName.Standardize();
@@ -125,6 +125,7 @@
       DateTime createdAt = DateTime.UtcNow;
       string userId = artist.UserId;
       bool isDeleted = false;
+      bool hasImage = false;
 
       using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
       {
@@ -136,6 +137,7 @@
         command.Parameters.AddWithValue("@user_id", userId);
         command.Parameters.AddWithValue("@created_at", createdAt);
         command.Parameters.AddWithValue("@is_deleted", isDeleted);
+        command.Parameters.AddWithValue("@has_image", hasImage);
 
         try
         {
