@@ -33,5 +33,7 @@
     public bool IsDeleted { get; set; }
 
     public bool HasImage { get; set; }
+
+    public string ImageUrl { get; set; }
   }
 }

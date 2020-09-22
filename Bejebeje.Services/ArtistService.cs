@@ -97,6 +97,12 @@
             artist.ModifiedAt = reader[7] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader[7]);
             artist.IsDeleted = Convert.ToBoolean(reader[8]);
             artist.HasImage = Convert.ToBoolean(reader[9]);
+
+            if (artist.HasImage)
+            {
+              artist.ImageUrl =
+                $"https://s3.eu-west-2.amazonaws.com/bejebeje.com/artist-images/small/{artist.FullName.NormalizeStringForUrl()}-{artist.Id}.jpg";
+            }
           }
         }
         catch (Exception ex)
