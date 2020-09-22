@@ -17,14 +17,6 @@
       _artistImageService = artistImageService;
     }
 
-    public async Task<FileResult> Get(int id)
-    {
-      ArtistImageReadViewModel image = await _artistImageService.GetImageByIdAsync(id);
-      string contentType = "image/jpg";
-
-      return File(image.Data, contentType);
-    }
-
     public async Task<FileResult> Artist(int id)
     {
       ArtistImageReadViewModel image = await _artistImageService.GetImageByArtistIdAsync(id);
