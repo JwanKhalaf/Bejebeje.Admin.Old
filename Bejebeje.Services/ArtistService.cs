@@ -96,9 +96,7 @@
             artist.CreatedAt = Convert.ToDateTime(reader[6]);
             artist.ModifiedAt = reader[7] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader[7]);
             artist.IsDeleted = Convert.ToBoolean(reader[8]);
-
-            ArtistImageReadViewModel image = await _artistImageService.GetImageByArtistIdAsync(artist.Id);
-            artist.HasImage = image != null;
+            artist.HasImage = Convert.ToBoolean(reader[9]);
           }
         }
         catch (Exception ex)
