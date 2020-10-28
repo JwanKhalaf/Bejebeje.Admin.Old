@@ -96,9 +96,13 @@
             artist.CreatedAt = Convert.ToDateTime(reader[6]);
             artist.ModifiedAt = reader[7] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader[7]);
             artist.IsDeleted = Convert.ToBoolean(reader[8]);
+            artist.HasImage = Convert.ToBoolean(reader[9]);
 
-            ArtistImageReadViewModel image = await _artistImageService.GetImageByArtistIdAsync(artist.Id);
-            artist.HasImage = image != null;
+            if (artist.HasImage)
+            {
+              artist.ImageUrl =
+                $"https://s3.eu-west-2.amazonaws.com/bejebeje.com/artist-images/small/{artist.FullName.NormalizeStringForUrl()}-{artist.Id}.jpg";
+            }
           }
         }
         catch (Exception ex)
@@ -115,7 +119,7 @@
     public async Task<int> AddArtistAsync(ArtistViewModel artist)
     {
       string connectionString = _databaseOptions.ConnectionString;
-      string sqlStatement = "insert into artists (first_name, last_name, full_name, is_approved, user_id, created_at, is_deleted) values (@first_name, @last_name, @full_name, @is_approved, @user_id, @created_at, @is_deleted) returning id";
+      string sqlStatement = "insert into artists (first_name, last_name, full_name, is_approved, user_id, created_at, is_deleted, has_image) values (@first_name, @last_name, @full_name, @is_approved, @user_id, @created_at, @is_deleted, @has_image) returning id";
       int artistId = 0;
 
       string firstName = artist.FirstName.Standardize();
@@ -125,6 +129,7 @@
       DateTime createdAt = DateTime.UtcNow;
       string userId = artist.UserId;
       bool isDeleted = false;
+      bool hasImage = false;
 
       using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
       {
@@ -136,6 +141,7 @@
         command.Parameters.AddWithValue("@user_id", userId);
         command.Parameters.AddWithValue("@created_at", createdAt);
         command.Parameters.AddWithValue("@is_deleted", isDeleted);
+        command.Parameters.AddWithValue("@has_image", hasImage);
 
         try
         {

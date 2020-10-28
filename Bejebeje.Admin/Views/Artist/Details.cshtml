@@ -30,7 +30,7 @@
     <dd class="col-sm-10">
       @if (Model.Artist.HasImage)
       {
-        <img src="/ArtistImage/Artist/@Model.Artist.Id" />
+        <img src="@Model.Artist.ImageUrl" />
 
         <a asp-action="Edit" asp-controller="ArtistImage" asp-route-id="@Model.Artist.Id">Update image</a>
 
