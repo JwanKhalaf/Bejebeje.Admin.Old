@@ -23,5 +23,7 @@
     public int ArtistId { get; set; }
 
     public int? AuthorId { get; set; }
+
+    public bool IsVerified { get; set; }
   }
 }
