@@ -69,6 +69,12 @@
       @Model.Lyric.IsApproved.ToYesOrNo()
     </dd>
     <dt class="col-sm-2">
+      @Html.DisplayNameFor(model => model.Lyric.IsVerified)
+    </dt>
+    <dd class="col-sm-10">
+      @Model.Lyric.IsVerified.ToYesOrNo()
+    </dd>
+    <dt class="col-sm-2">
       @Html.DisplayNameFor(model => model.Lyric.ArtistId)
     </dt>
     <dd class="col-sm-10">

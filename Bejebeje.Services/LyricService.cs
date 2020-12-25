@@ -32,7 +32,7 @@
     public async Task<LyricViewModel> GetLyricByIdAsync(int id)
     {
       string connectionString = _databaseOptions.ConnectionString;
-      string sqlStatement = "select * from lyrics where id = @id";
+      string sqlStatement = "select l.id, l.title, l.body, l.user_id, l.created_at, l.modified_at, l.is_deleted, l.is_approved, l.artist_id, l.author_id, l.is_verified from lyrics l where id = @id";
       LyricViewModel lyric = null;
 
       using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
@@ -59,6 +59,7 @@
             lyric.IsApproved = Convert.ToBoolean(reader[7]);
             lyric.ArtistId = Convert.ToInt32(reader[8]);
             lyric.AuthorId = reader[9] == DBNull.Value ? (int?)null : Convert.ToInt32(reader[9]);
+            lyric.IsVerified = Convert.ToBoolean(reader[10]);
           }
         }
         catch (Exception ex)
@@ -122,7 +123,7 @@
     public async Task<int> AddLyricAsync(LyricCreateViewModel newLyric)
     {
       string connectionString = _databaseOptions.ConnectionString;
-      string sqlStatement = "insert into lyrics (title, body, user_id, created_at, is_deleted, is_approved, artist_id) values (@title, @body, @user_id, @created_at, @is_deleted, @is_approved, @artist_id) returning id";
+      string sqlStatement = "insert into lyrics (title, body, user_id, created_at, is_deleted, is_approved, artist_id, is_verified) values (@title, @body, @user_id, @created_at, @is_deleted, @is_approved, @artist_id, @is_verified) returning id";
       int lyricId = 0;
 
       using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
@@ -136,6 +137,7 @@
         bool isDeleted = false;
         bool isApproved = true;
         int artistId = newLyric.ArtistId;
+        bool isVerified = newLyric.IsVerified;
 
         command.Parameters.AddWithValue("@title", title);
         command.Parameters.AddWithValue("@body", body);
@@ -144,6 +146,7 @@
         command.Parameters.AddWithValue("@is_deleted", isDeleted);
         command.Parameters.AddWithValue("@is_approved", isApproved);
         command.Parameters.AddWithValue("@artist_id", artistId);
+        command.Parameters.AddWithValue("@is_verified", isVerified);
 
         try
         {
@@ -180,7 +183,7 @@
       bool slugDoesNotExistAlready = lyricSlugs.All(s => s.Name != updatedSlug);
 
       string connectionString = _databaseOptions.ConnectionString;
-      string sqlStatementToUpdateLyric = "update lyrics set title = @title, body = @body, modified_at = @modified_at where id = @id";
+      string sqlStatementToUpdateLyric = "update lyrics set title = @title, body = @body, is_verified = @is_verified, modified_at = @modified_at where id = @id";
 
       using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
       {
@@ -188,6 +191,7 @@
         command.Parameters.AddWithValue("@id", editedLyric.Id);
         command.Parameters.AddWithValue("@title", editedLyric.Title);
         command.Parameters.AddWithValue("@body", editedLyric.Body);
+        command.Parameters.AddWithValue("@is_verified", editedLyric.IsVerified);
         command.Parameters.AddWithValue("modified_at", modifiedAt);
 
         try
