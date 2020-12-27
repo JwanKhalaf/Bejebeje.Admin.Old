@@ -79,6 +79,7 @@
       viewModel.Id = lyric.Id;
       viewModel.Title = lyric.Title;
       viewModel.Body = lyric.Body;
+      viewModel.IsVerified = lyric.IsVerified;
 
       return View(viewModel);
     }
