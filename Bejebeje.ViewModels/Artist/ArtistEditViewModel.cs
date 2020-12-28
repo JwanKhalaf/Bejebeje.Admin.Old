@@ -1,6 +1,7 @@
 ﻿namespace Bejebeje.ViewModels.Artist
 {
   using System.ComponentModel.DataAnnotations;
+  using Shared;
 
   public class ArtistEditViewModel
   {
@@ -8,7 +9,7 @@
     public int Id { get; set; }
 
     [Required]
-    [Display (Name = "First name")]
+    [Display(Name = "First name")]
     public string FirstName { get; set; }
 
     [Display(Name = "Last name")]
@@ -19,5 +20,7 @@
 
     [Display(Name = "Is deleted?")]
     public bool IsDeleted { get; set; }
+
+    public SexViewModel Sex { get; set; }
   }
 }

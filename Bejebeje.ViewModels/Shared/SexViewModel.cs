@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
-
-namespace Bejebeje.ViewModels.Shared
+﻿namespace Bejebeje.ViewModels.Shared
 {
+  using System.ComponentModel.DataAnnotations;
   using Microsoft.AspNetCore.Mvc.Rendering;
+  using System.Collections.Generic;
 
   public class SexViewModel
   {
+    [Display(Name = "Sex")]
     public string SelectedSex { get; set; }
 
     public List<SelectListItem> SexOptions = new List<SelectListItem>

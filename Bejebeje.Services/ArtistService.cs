@@ -9,8 +9,8 @@
   using Microsoft.Extensions.Options;
   using Npgsql;
   using ViewModels.Artist;
-  using ViewModels.ArtistImage;
   using ViewModels.ArtistSlug;
+  using ViewModels.Shared;
 
   public class ArtistService : IArtistService
   {
@@ -97,6 +97,8 @@
             artist.ModifiedAt = reader[7] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader[7]);
             artist.IsDeleted = Convert.ToBoolean(reader[8]);
             artist.HasImage = Convert.ToBoolean(reader[9]);
+            artist.Sex = new SexViewModel();
+            artist.Sex.SelectedSex = Convert.ToString(reader[10]);
 
             if (artist.HasImage)
             {
@@ -172,7 +174,7 @@
     public async Task EditArtistAsync(ArtistEditViewModel editedArtist)
     {
       string connectionString = _databaseOptions.ConnectionString;
-      string sqlStatementToUpdateLyric = "update artists set first_name = @first_name, last_name = @last_name, full_name = @full_name, is_approved = @is_approved, modified_at = @modified_at, is_deleted = @is_deleted where id = @id";
+      string sqlStatementToUpdateLyric = "update artists set first_name = @first_name, last_name = @last_name, full_name = @full_name, sex = @sex, is_approved = @is_approved, modified_at = @modified_at, is_deleted = @is_deleted where id = @id";
 
       int artistId = editedArtist.Id;
       string firstName = editedArtist.FirstName.Standardize();
@@ -180,6 +182,7 @@
       string fullName = string.IsNullOrEmpty(lastName)
         ? firstName
         : $"{firstName} {lastName}";
+      string sex = editedArtist.Sex.SelectedSex;
       bool isApproved = editedArtist.IsApproved;
       DateTime modifiedAt = DateTime.UtcNow;
       bool isDeleted = editedArtist.IsDeleted;
@@ -217,6 +220,7 @@
         command.Parameters.AddWithValue("@first_name", firstName);
         command.Parameters.AddWithValue("@last_name", lastName);
         command.Parameters.AddWithValue("@full_name", fullName);
+        command.Parameters.AddWithValue("@sex", sex);
         command.Parameters.AddWithValue("@is_approved", isApproved);
         command.Parameters.AddWithValue("@modified_at", modifiedAt);
         command.Parameters.AddWithValue("@is_deleted", isDeleted);

@@ -78,6 +78,7 @@
       viewModel.LastName = artist.LastName;
       viewModel.IsApproved = artist.IsApproved;
       viewModel.IsDeleted = artist.IsDeleted;
+      viewModel.Sex = artist.Sex;
 
       return View(viewModel);
     }
