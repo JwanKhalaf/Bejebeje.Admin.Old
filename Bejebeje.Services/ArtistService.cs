@@ -119,12 +119,13 @@
     public async Task<int> AddArtistAsync(ArtistViewModel artist)
     {
       string connectionString = _databaseOptions.ConnectionString;
-      string sqlStatement = "insert into artists (first_name, last_name, full_name, is_approved, user_id, created_at, is_deleted, has_image) values (@first_name, @last_name, @full_name, @is_approved, @user_id, @created_at, @is_deleted, @has_image) returning id";
+      string sqlStatement = "insert into artists (first_name, last_name, full_name, sex, is_approved, user_id, created_at, is_deleted, has_image) values (@first_name, @last_name, @full_name, @sex, @is_approved, @user_id, @created_at, @is_deleted, @has_image) returning id";
       int artistId = 0;
 
       string firstName = artist.FirstName.Standardize();
       string lastName = artist.LastName.Standardize();
       string fullName = string.IsNullOrEmpty(lastName) ? firstName : $"{firstName} {lastName}";
+      string sex = artist.Sex.SelectedSex;
       bool isApproved = true;
       DateTime createdAt = DateTime.UtcNow;
       string userId = artist.UserId;
@@ -137,6 +138,7 @@
         command.Parameters.AddWithValue("@first_name", firstName);
         command.Parameters.AddWithValue("@last_name", lastName);
         command.Parameters.AddWithValue("@full_name", fullName);
+        command.Parameters.AddWithValue("@sex", sex);
         command.Parameters.AddWithValue("@is_approved", isApproved);
         command.Parameters.AddWithValue("@user_id", userId);
         command.Parameters.AddWithValue("@created_at", createdAt);

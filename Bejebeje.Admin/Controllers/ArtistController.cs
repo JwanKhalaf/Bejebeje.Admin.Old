@@ -9,6 +9,7 @@
   using Services;
   using ViewModels.Artist;
   using ViewModels.ArtistSlug;
+  using ViewModels.Shared;
 
   [Authorize(Roles = "moderator,administrator")]
   public class ArtistController : Controller
@@ -50,7 +51,11 @@
 
     public IActionResult Create()
     {
-      return View();
+      ArtistViewModel viewModel = new ArtistViewModel();
+
+      viewModel.Sex = new SexViewModel();
+
+      return View(viewModel);
     }
 
     [HttpPost]
