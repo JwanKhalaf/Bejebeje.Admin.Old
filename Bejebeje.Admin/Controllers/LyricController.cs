@@ -80,6 +80,7 @@
       viewModel.Title = lyric.Title;
       viewModel.Body = lyric.Body;
       viewModel.IsVerified = lyric.IsVerified;
+      viewModel.IsDeleted = lyric.IsDeleted;
 
       return View(viewModel);
     }

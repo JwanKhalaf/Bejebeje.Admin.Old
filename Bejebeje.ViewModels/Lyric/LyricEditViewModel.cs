@@ -16,5 +16,9 @@
     [Required]
     [Display (Name = "Is verified?")]
     public bool IsVerified { get; set; }
+
+    [Required]
+    [Display (Name = "Is deleted?")]
+    public bool IsDeleted { get; set; }
   }
 }

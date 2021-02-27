@@ -183,7 +183,7 @@
       bool slugDoesNotExistAlready = lyricSlugs.All(s => s.Name != updatedSlug);
 
       string connectionString = _databaseOptions.ConnectionString;
-      string sqlStatementToUpdateLyric = "update lyrics set title = @title, body = @body, is_verified = @is_verified, modified_at = @modified_at where id = @id";
+      string sqlStatementToUpdateLyric = "update lyrics set title = @title, body = @body, is_verified = @is_verified, is_deleted = @is_deleted, modified_at = @modified_at where id = @id";
 
       using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
       {
@@ -192,6 +192,7 @@
         command.Parameters.AddWithValue("@title", editedLyric.Title);
         command.Parameters.AddWithValue("@body", editedLyric.Body);
         command.Parameters.AddWithValue("@is_verified", editedLyric.IsVerified);
+        command.Parameters.AddWithValue("@is_deleted", editedLyric.IsDeleted);
         command.Parameters.AddWithValue("modified_at", modifiedAt);
 
         try
@@ -211,7 +212,7 @@
         await _lyricSlugService.MarkIsPrimaryAsFalseForAllLyricSlugs(editedLyric.Id);
 
         string sqlStatementToAddNewLyricSlug = "insert into lyric_slugs (name, is_primary, created_at, is_deleted, lyric_id) values(@name, @is_primary, @created_at, @is_deleted, @lyric_id)";
-        
+
         int lyricId = editedLyric.Id;
         bool isPrimary = true;
         bool isDeleted = false;
