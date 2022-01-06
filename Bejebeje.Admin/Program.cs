@@ -73,9 +73,9 @@ app.UseForwardedHeaders(forwardedHeadersOptions);
 // configure the http request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
-    // the default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+  app.UseExceptionHandler("/Error");
+  // the default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+  app.UseHsts();
 }
 
 app.UseHttpsRedirection();
@@ -88,11 +88,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
-{
-  endpoints
-    .MapControllerRoute(
-      "default",
-  pattern: "{controller=Artist}/{action=Index}/{id?}");
-});
+      {
+        endpoints
+          .MapControllerRoute(name: "default", pattern: "{controller=Artist}/{action=Index}/{id?}")
+          .RequireAuthorization();
+      });
 
 app.Run();

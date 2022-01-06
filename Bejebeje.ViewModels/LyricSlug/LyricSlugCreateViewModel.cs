@@ -8,7 +8,7 @@
     [Required]
     public string Name { get; set; }
 
-    [Display (Name = "Is primary?")]
+    [Display(Name = "Is primary?")]
     public bool IsPrimary { get; set; }
 
     public DateTime CreatedAt { get; set; }

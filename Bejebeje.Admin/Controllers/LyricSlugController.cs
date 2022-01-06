@@ -55,7 +55,7 @@
       viewModel.IsPrimary = slug.IsPrimary;
       viewModel.IsDeleted = slug.IsDeleted;
       viewModel.Name = slug.Name;
-      
+
       return View(viewModel);
     }
 
