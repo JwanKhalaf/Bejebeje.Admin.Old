@@ -7,7 +7,7 @@
   using Services;
   using ViewModels.ArtistSlug;
 
-  [Authorize(Roles = "moderator,administrator")]
+  [Authorize(Roles = "admin,mod")]
   public class ArtistSlugController : Controller
   {
     private readonly IArtistSlugService _artistSlugService;

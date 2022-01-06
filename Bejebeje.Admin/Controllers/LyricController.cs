@@ -10,7 +10,7 @@
   using ViewModels.Lyric;
   using ViewModels.LyricSlug;
 
-  [Authorize(Roles = "moderator,administrator")]
+  [Authorize(Roles = "admin,mod")]
   public class LyricController : Controller
   {
     private readonly IArtistService _artistService;
