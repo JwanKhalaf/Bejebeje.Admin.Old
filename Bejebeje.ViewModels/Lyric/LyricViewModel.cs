@@ -27,7 +27,7 @@
 
     public int? AuthorId { get; set; }
 
-    [Display (Name = "Is verified?")]
+    [Display(Name = "Is verified?")]
     public bool IsVerified { get; set; }
   }
 }

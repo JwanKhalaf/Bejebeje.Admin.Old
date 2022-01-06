@@ -7,7 +7,7 @@
   public interface IArtistService
   {
     Task<IEnumerable<ArtistListItemViewModel>> GetArtistsAsync();
-    
+
     Task<ArtistViewModel> GetArtistByIdAsync(int id);
 
     Task<int> AddArtistAsync(ArtistViewModel artist);
