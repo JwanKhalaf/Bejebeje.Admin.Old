@@ -7,7 +7,7 @@
   using Services;
   using ViewModels.LyricSlug;
 
-  [Authorize(Roles = "moderator,administrator")]
+  [Authorize(Roles = "admin,mod")]
   public class LyricSlugController : Controller
   {
     private readonly ILyricSlugService _lyricSlugService;

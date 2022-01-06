@@ -11,7 +11,7 @@
   using ViewModels.ArtistSlug;
   using ViewModels.Shared;
 
-  [Authorize(Roles = "moderator,administrator")]
+  [Authorize(Roles = "admin,mod")]
   public class ArtistController : Controller
   {
     private readonly IArtistService _artistService;

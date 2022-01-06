@@ -7,7 +7,7 @@
   using Services;
   using ViewModels.ArtistImage;
 
-  [Authorize(Roles = "moderator,administrator")]
+  [Authorize(Roles = "admin,mod")]
   public class ArtistImageController : Controller
   {
     private readonly IArtistImageService _artistImageService;
