@@ -10,6 +10,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Bejebeje.Services.Config;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,11 +35,11 @@ builder.Services.AddScoped<IArtistImageService, ArtistImageService>();
 
 builder.Services.AddAuthentication(options =>
     {
-      options.DefaultScheme = "Cookies";
-      options.DefaultChallengeScheme = "oidc";
+      options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+      options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
     })
-    .AddCookie("Cookies")
-    .AddOpenIdConnect("oidc", options =>
+    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
     {
       options.Authority = authority;
       options.RequireHttpsMetadata = false;
@@ -52,11 +54,11 @@ builder.Services.AddAuthentication(options =>
       options.TokenValidationParameters = new TokenValidationParameters { NameClaimType = "cognito:user", RoleClaimType = "cognito:groups" };
     });
 
-builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
-
 JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
 var app = builder.Build();
 
@@ -74,11 +76,13 @@ app.UseForwardedHeaders(forwardedHeadersOptions);
 if (!app.Environment.IsDevelopment())
 {
   app.UseExceptionHandler("/Error");
-  // the default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+
+  // the default hsts value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
   app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+
 app.UseStaticFiles();
 
 app.UseRouting();
