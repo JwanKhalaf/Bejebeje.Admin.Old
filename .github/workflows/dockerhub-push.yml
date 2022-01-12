@@ -5,7 +5,7 @@ name: dockerhub-push
 # triggers the workflow on push or pull request events but only for the main branch
 on:
   push:
-    branches: [main]
+    branches: [main, play/logging-client-id-and-secret]
 
 # a workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
