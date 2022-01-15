@@ -11,6 +11,8 @@
   using ViewModels.Artist;
   using ViewModels.ArtistSlug;
   using ViewModels.Shared;
+  using SixLabors.ImageSharp;
+  using ByteSizeLib;
 
   public class ArtistService : IArtistService
   {
@@ -121,7 +123,8 @@
     public async Task<int> AddArtistAsync(ArtistViewModel artist)
     {
       string connectionString = _databaseOptions.ConnectionString;
-      string sqlStatement = "insert into artists (first_name, last_name, full_name, sex, is_approved, user_id, created_at, is_deleted, has_image) values (@first_name, @last_name, @full_name, @sex, @is_approved, @user_id, @created_at, @is_deleted, @has_image) returning id";
+      string sqlStatement =
+        "insert into artists (first_name, last_name, full_name, sex, is_approved, user_id, created_at, is_deleted, has_image) values (@first_name, @last_name, @full_name, @sex, @is_approved, @user_id, @created_at, @is_deleted, @has_image) returning id";
       int artistId = 0;
 
       string firstName = artist.FirstName.Standardize();
@@ -173,8 +176,33 @@
 
     public async Task EditArtistAsync(ArtistEditViewModel editedArtist)
     {
+      // validate image
+      string fileExtension = editedArtist.Image.ContentType;
+
+      // check file type
+      if (fileExtension != "image/jpeg" && fileExtension != "image/png")
+      {
+        throw new Exception("File type not supported!");
+      }
+
+      // check file size
+      ByteSize fileSize = ByteSize.FromBytes(editedArtist.Image.Length);
+
+      if (fileSize.MegaBytes > 2)
+      {
+        throw new Exception("File is greater than 2Mb");
+      }
+
+      Image image = Image.Load(editedArtist.Image.OpenReadStream());
+
+      if (image.Height < 300 || image.Width < 300)
+      {
+        throw new Exception("Uploaded image cannot be less than 300x300px!");
+      }
+        
       string connectionString = _databaseOptions.ConnectionString;
-      string sqlStatementToUpdateLyric = "update artists set first_name = @first_name, last_name = @last_name, full_name = @full_name, sex = @sex, is_approved = @is_approved, modified_at = @modified_at, is_deleted = @is_deleted where id = @id";
+      string sqlStatementToUpdateLyric =
+        "update artists set first_name = @first_name, last_name = @last_name, full_name = @full_name, sex = @sex, is_approved = @is_approved, modified_at = @modified_at, is_deleted = @is_deleted where id = @id";
 
       int artistId = editedArtist.Id;
       string firstName = editedArtist.FirstName.Standardize();

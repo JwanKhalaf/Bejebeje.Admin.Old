@@ -94,8 +94,7 @@ app.UseAuthorization();
 app.UseEndpoints(endpoints =>
       {
         endpoints
-          .MapControllerRoute(name: "default", pattern: "{controller=Artist}/{action=Index}/{id?}")
-          .RequireAuthorization();
+          .MapControllerRoute(name: "default", pattern: "{controller=Artist}/{action=Index}/{id?}");
       });
 
 app.Run();

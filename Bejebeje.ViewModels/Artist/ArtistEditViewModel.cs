@@ -1,6 +1,7 @@
 ﻿namespace Bejebeje.ViewModels.Artist
 {
   using System.ComponentModel.DataAnnotations;
+  using Microsoft.AspNetCore.Http;
   using Shared;
 
   public class ArtistEditViewModel
@@ -22,5 +23,8 @@
     public bool IsDeleted { get; set; }
 
     public SexViewModel Sex { get; set; }
+    
+    [Display(Name = "Artist image")]
+    public IFormFile Image { get; set; }
   }
 }
