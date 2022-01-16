@@ -23,6 +23,8 @@ string clientSecret = builder.Configuration["IdentityServerConfiguration:ClientS
 
 builder.Services.Configure<DatabaseOptions>(builder.Configuration);
 
+builder.Services.Configure<AWSOptions>(builder.Configuration.GetSection("AWSOptions"));
+
 builder.Services.AddScoped<IArtistService, ArtistService>();
 
 builder.Services.AddScoped<IArtistSlugService, ArtistSlugService>();
@@ -32,6 +34,8 @@ builder.Services.AddScoped<ILyricService, LyricService>();
 builder.Services.AddScoped<ILyricSlugService, LyricSlugService>();
 
 builder.Services.AddScoped<IArtistImageService, ArtistImageService>();
+
+builder.Services.AddScoped<IS3ImageUploadService, S3ImageUploadService>();
 
 builder.Services.AddAuthentication(options =>
     {

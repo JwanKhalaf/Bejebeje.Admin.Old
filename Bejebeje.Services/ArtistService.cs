@@ -11,8 +11,6 @@
   using ViewModels.Artist;
   using ViewModels.ArtistSlug;
   using ViewModels.Shared;
-  using SixLabors.ImageSharp;
-  using ByteSizeLib;
 
   public class ArtistService : IArtistService
   {
@@ -20,16 +18,16 @@
 
     private readonly IArtistSlugService _artistSlugService;
 
-    private readonly IArtistImageService _artistImageService;
+    private readonly IS3ImageUploadService _s3ImageUploadService;
 
     public ArtistService(
       IOptionsMonitor<DatabaseOptions> optionsAccessor,
       IArtistSlugService artistSlugService,
-      IArtistImageService artistImageService)
+      IS3ImageUploadService s3ImageUploadService)
     {
       _databaseOptions = optionsAccessor.CurrentValue;
       _artistSlugService = artistSlugService;
-      _artistImageService = artistImageService;
+      _s3ImageUploadService = s3ImageUploadService;
     }
 
     public async Task<IEnumerable<ArtistListItemViewModel>> GetArtistsAsync()
@@ -176,6 +174,7 @@
 
     public async Task EditArtistAsync(ArtistEditViewModel editedArtist)
     {
+      await _s3ImageUploadService.UploadImageToS3Async(editedArtist.Image);
       string connectionString = _databaseOptions.ConnectionString;
       string sqlStatementToUpdateLyric =
         "update artists set first_name = @first_name, last_name = @last_name, full_name = @full_name, sex = @sex, is_approved = @is_approved, modified_at = @modified_at, is_deleted = @is_deleted where id = @id";
