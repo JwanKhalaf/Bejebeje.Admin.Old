@@ -176,30 +176,6 @@
 
     public async Task EditArtistAsync(ArtistEditViewModel editedArtist)
     {
-      // validate image
-      string fileExtension = editedArtist.Image.ContentType;
-
-      // check file type
-      if (fileExtension != "image/jpeg" && fileExtension != "image/png")
-      {
-        throw new Exception("File type not supported!");
-      }
-
-      // check file size
-      ByteSize fileSize = ByteSize.FromBytes(editedArtist.Image.Length);
-
-      if (fileSize.MegaBytes > 2)
-      {
-        throw new Exception("File is greater than 2Mb");
-      }
-
-      Image image = Image.Load(editedArtist.Image.OpenReadStream());
-
-      if (image.Height < 300 || image.Width < 300)
-      {
-        throw new Exception("Uploaded image cannot be less than 300x300px!");
-      }
-        
       string connectionString = _databaseOptions.ConnectionString;
       string sqlStatementToUpdateLyric =
         "update artists set first_name = @first_name, last_name = @last_name, full_name = @full_name, sex = @sex, is_approved = @is_approved, modified_at = @modified_at, is_deleted = @is_deleted where id = @id";

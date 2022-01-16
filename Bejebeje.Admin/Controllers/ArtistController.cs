@@ -11,6 +11,7 @@
   using ViewModels.ArtistSlug;
   using ViewModels.Shared;
   
+  [Authorize(Roles = "admin,mod")]
   public class ArtistController : Controller
   {
     private readonly IArtistService _artistService;
@@ -85,6 +86,8 @@
     [HttpPost]
     public async Task<IActionResult> Edit(ArtistEditViewModel editedArtist)
     {
+      if (!ModelState.IsValid) return View(editedArtist);
+      
       try
       {
         await _artistService.EditArtistAsync(editedArtist);
