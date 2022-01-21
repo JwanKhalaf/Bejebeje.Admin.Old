@@ -30,7 +30,7 @@
     <dd class="col-sm-10">
       @if (Model.Artist.HasImage)
       {
-        <img src="@Model.Artist.ImageUrl" />
+        <img src="@Model.Artist.ImageUrl"/>
 
         <a asp-action="Edit" asp-controller="ArtistImage" asp-route-id="@Model.Artist.Id">Update image</a>
 
@@ -38,7 +38,8 @@
       }
       else
       {
-        <text>None | </text> <a asp-action="Create" asp-controller="ArtistImage" asp-route-id="@Model.Artist.Id">Add image</a>
+        <text>None | </text>
+        <a asp-action="Create" asp-controller="ArtistImage" asp-route-id="@Model.Artist.Id">Add image</a>
       }
     </dd>
 
@@ -99,6 +100,12 @@
     <dd class="col-sm-10">
       @Model.Artist.IsDeleted.ToYesOrNo()
     </dd>
+    <dt class="col-sm-2">
+      @Html.DisplayNameFor(model => model.Artist.HasImage)
+    </dt>
+    <dd class="col-sm-10">
+      @Model.Artist.HasImage.ToYesOrNo()
+    </dd>
   </dl>
 </div>
 
@@ -113,35 +120,35 @@
 <div>
   <table class="table">
     <thead>
-      <tr>
-        <th scope="col">Id</th>
-        <th scope="col">Name</th>
-        <th scope="col">Is primary?</th>
-        <th scope="col">Created at</th>
-        <th scope="col">Modified at</th>
-        <th></th>
-      </tr>
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Name</th>
+      <th scope="col">Is primary?</th>
+      <th scope="col">Created at</th>
+      <th scope="col">Modified at</th>
+      <th></th>
+    </tr>
     </thead>
 
     <tbody>
-      @foreach (var slug in Model.Slugs)
-      {
-        <tr>
-          <td>@slug.Id</td>
-          <td>@slug.Name</td>
-          <td>@slug.IsPrimary.ToYesOrNo()</td>
-          <td>@slug.CreatedAt.ToString("dd MMM yyyy hh:mm:ss")</td>
-          <td>
-            @if (slug.ModifiedAt.HasValue)
-            {
-              @slug.ModifiedAt.Value.ToString("dd MMM yyyy hh:mm:ss")
-            }
-          </td>
-          <td style="text-align: right">
-            @Html.ActionLink("Edit", "Edit", "ArtistSlug", new { id = slug.Id })
-          </td>
-        </tr>
-      }
+    @foreach (var slug in Model.Slugs)
+    {
+      <tr>
+        <td>@slug.Id</td>
+        <td>@slug.Name</td>
+        <td>@slug.IsPrimary.ToYesOrNo()</td>
+        <td>@slug.CreatedAt.ToString("dd MMM yyyy hh:mm:ss")</td>
+        <td>
+          @if (slug.ModifiedAt.HasValue)
+          {
+            @slug.ModifiedAt.Value.ToString("dd MMM yyyy hh:mm:ss")
+          }
+        </td>
+        <td style="text-align: right">
+          @Html.ActionLink("Edit", "Edit", "ArtistSlug", new { id = slug.Id })
+        </td>
+      </tr>
+    }
     </tbody>
   </table>
 </div>

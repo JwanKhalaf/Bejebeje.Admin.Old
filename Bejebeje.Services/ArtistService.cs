@@ -2,12 +2,15 @@
 {
   using System;
   using System.Collections.Generic;
+  using System.IO;
   using System.Linq;
   using System.Threading.Tasks;
   using Common;
   using Config;
   using Microsoft.Extensions.Options;
   using Npgsql;
+  using SixLabors.ImageSharp;
+  using SixLabors.ImageSharp.Processing;
   using ViewModels.Artist;
   using ViewModels.ArtistSlug;
   using ViewModels.Shared;
@@ -174,10 +177,9 @@
 
     public async Task EditArtistAsync(ArtistEditViewModel editedArtist)
     {
-      await _s3ImageUploadService.UploadImageToS3Async(editedArtist.Image);
       string connectionString = _databaseOptions.ConnectionString;
       string sqlStatementToUpdateLyric =
-        "update artists set first_name = @first_name, last_name = @last_name, full_name = @full_name, sex = @sex, is_approved = @is_approved, modified_at = @modified_at, is_deleted = @is_deleted where id = @id";
+        "update artists set first_name = @first_name, last_name = @last_name, full_name = @full_name, sex = @sex, is_approved = @is_approved, modified_at = @modified_at, is_deleted = @is_deleted, has_image = @has_image where id = @id";
 
       int artistId = editedArtist.Id;
       string firstName = editedArtist.FirstName.Standardize();
@@ -189,6 +191,7 @@
       bool isApproved = editedArtist.IsApproved;
       DateTime modifiedAt = DateTime.UtcNow;
       bool isDeleted = editedArtist.IsDeleted;
+      bool hasImage = editedArtist.Image is not null || editedArtist.HasImage;
 
       IEnumerable<ArtistSlugViewModel> artistSlugs = await _artistSlugService.GetSlugsForArtistAsync(editedArtist.Id);
 
@@ -227,12 +230,25 @@
         command.Parameters.AddWithValue("@is_approved", isApproved);
         command.Parameters.AddWithValue("@modified_at", modifiedAt);
         command.Parameters.AddWithValue("@is_deleted", isDeleted);
+        command.Parameters.AddWithValue("@has_image", hasImage);
 
         try
         {
           await connection.OpenAsync();
 
           await command.ExecuteNonQueryAsync();
+          
+          Image standardImage = await Image.LoadAsync(editedArtist.Image.OpenReadStream());
+
+          ArtistImage artistImage = new ArtistImage(updatedSlug, editedArtist.Id, standardImage);
+
+          await _s3ImageUploadService.UploadImageToS3Async(
+            artistImage.GetKey(ImageSize.Standard, ImageType.Jpeg),
+            await artistImage.GetStreamAsync(ImageSize.Standard, ImageType.Jpeg));
+      
+          await _s3ImageUploadService.UploadImageToS3Async(
+            artistImage.GetKey(ImageSize.Standard, ImageType.WebP),
+            await artistImage.GetStreamAsync(ImageSize.Standard, ImageType.WebP));
         }
         catch (Exception ex)
         {

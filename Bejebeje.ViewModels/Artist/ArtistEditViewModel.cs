@@ -20,6 +20,8 @@
     [Display(Name = "Is deleted?")] public bool IsDeleted { get; set; }
 
     public SexViewModel Sex { get; set; }
+    
+    public bool HasImage { get; set; }
 
     [AllowedExtensions(new[] { ".jpg", ".png" })]
     [MaxFileSizeInMegabytes(2)]

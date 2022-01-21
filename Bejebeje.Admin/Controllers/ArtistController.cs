@@ -11,7 +11,7 @@
   using ViewModels.ArtistSlug;
   using ViewModels.Shared;
   
-  // [Authorize(Roles = "admin,mod")]
+  [Authorize(Roles = "admin,mod")]
   public class ArtistController : Controller
   {
     private readonly IArtistService _artistService;
@@ -79,6 +79,7 @@
       viewModel.IsApproved = artist.IsApproved;
       viewModel.IsDeleted = artist.IsDeleted;
       viewModel.Sex = artist.Sex;
+      viewModel.HasImage = artist.HasImage;
 
       return View(viewModel);
     }
