@@ -8,19 +8,24 @@ using SixLabors.ImageSharp.Processing;
 
 public class ArtistImage
 {
+  private const string ArtistImagesFolderInS3 = "artist-images/";
+  
+  private const string StandardImageSizeSuffix = "s";
+  
+  private const string SmallImageSizeSuffix = "sm";
+  
+  private const string ExtraSmallImageSizeSuffix = "xsm";
+  
   private const string JpegExtension = ".jpg";
 
   private const string WebpExtension = ".webp";
 
-  private string PrimarySlug { get; set; }
+  private int ArtistId { get; }
 
-  private int ArtistId { get; set; }
+  private Image Image { get; }
 
-  public Image Image { get; set; }
-
-  public ArtistImage(string primarySlug, int artistId, Image image)
+  public ArtistImage(int artistId, Image image)
   {
-    PrimarySlug = primarySlug;
     ArtistId = artistId;
     Image = image;
   }
@@ -31,17 +36,17 @@ public class ArtistImage
     {
       return imageSize switch
       {
-        ImageSize.Standard => $"artist-images/standard/{PrimarySlug}-{ArtistId}{JpegExtension}",
-        ImageSize.Small => $"artist-images/small/{PrimarySlug}-{ArtistId}{JpegExtension}",
-        _ => $"artist-images/extra-small/{PrimarySlug}-{ArtistId}{JpegExtension}"
+        ImageSize.Standard => $"{ArtistImagesFolderInS3}{ArtistId}-{StandardImageSizeSuffix}{JpegExtension}",
+        ImageSize.Small => $"{ArtistImagesFolderInS3}{ArtistId}-{SmallImageSizeSuffix}{JpegExtension}",
+        _ => $"{ArtistImagesFolderInS3}{ArtistId}-{ExtraSmallImageSizeSuffix}{JpegExtension}"
       };
     }
 
     return imageSize switch
     {
-      ImageSize.Standard => $"artist-images/standard/{PrimarySlug}-{ArtistId}{WebpExtension}",
-      ImageSize.Small => $"artist-images/small/{PrimarySlug}-{ArtistId}{WebpExtension}",
-      _ => $"artist-images/extra-small/{PrimarySlug}-{ArtistId}{WebpExtension}"
+      ImageSize.Standard => $"{ArtistImagesFolderInS3}{ArtistId}-{StandardImageSizeSuffix}{WebpExtension}",
+      ImageSize.Small => $"{ArtistImagesFolderInS3}{ArtistId}-{SmallImageSizeSuffix}{WebpExtension}",
+      _ => $"{ArtistImagesFolderInS3}{ArtistId}-{ExtraSmallImageSizeSuffix}{WebpExtension}"
     };
   }
 

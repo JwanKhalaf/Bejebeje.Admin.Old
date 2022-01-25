@@ -240,7 +240,7 @@
           
           Image standardImage = await Image.LoadAsync(editedArtist.Image.OpenReadStream());
 
-          ArtistImage artistImage = new ArtistImage(updatedSlug, editedArtist.Id, standardImage);
+          ArtistImage artistImage = new ArtistImage(editedArtist.Id, standardImage);
 
           await _s3ImageUploadService.UploadImageToS3Async(
             artistImage.GetKey(ImageSize.Standard, ImageType.Jpeg),
