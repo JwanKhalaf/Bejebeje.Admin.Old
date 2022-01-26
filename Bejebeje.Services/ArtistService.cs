@@ -2,7 +2,6 @@
 {
   using System;
   using System.Collections.Generic;
-  using System.IO;
   using System.Linq;
   using System.Threading.Tasks;
   using Common;
@@ -10,7 +9,6 @@
   using Microsoft.Extensions.Options;
   using Npgsql;
   using SixLabors.ImageSharp;
-  using SixLabors.ImageSharp.Processing;
   using ViewModels.Artist;
   using ViewModels.ArtistSlug;
   using ViewModels.Shared;
@@ -106,7 +104,7 @@
             if (artist.HasImage)
             {
               artist.ImageUrl =
-                $"https://s3.eu-west-2.amazonaws.com/bejebeje.com/artist-images/small/{artist.FullName.NormalizeStringForUrl()}-{artist.Id}.jpg";
+                $"https://s3.eu-west-2.amazonaws.com/bejebeje.com/artist-images/{artist.Id}-sm.jpg";
             }
           }
         }
@@ -245,10 +243,26 @@
           await _s3ImageUploadService.UploadImageToS3Async(
             artistImage.GetKey(ImageSize.Standard, ImageType.Jpeg),
             await artistImage.GetStreamAsync(ImageSize.Standard, ImageType.Jpeg));
+          
+          await _s3ImageUploadService.UploadImageToS3Async(
+            artistImage.GetKey(ImageSize.Small, ImageType.Jpeg),
+            await artistImage.GetStreamAsync(ImageSize.Small, ImageType.Jpeg));
+          
+          await _s3ImageUploadService.UploadImageToS3Async(
+            artistImage.GetKey(ImageSize.ExtraSmall, ImageType.Jpeg),
+            await artistImage.GetStreamAsync(ImageSize.ExtraSmall, ImageType.Jpeg));
       
           await _s3ImageUploadService.UploadImageToS3Async(
             artistImage.GetKey(ImageSize.Standard, ImageType.WebP),
             await artistImage.GetStreamAsync(ImageSize.Standard, ImageType.WebP));
+          
+          await _s3ImageUploadService.UploadImageToS3Async(
+            artistImage.GetKey(ImageSize.Small, ImageType.WebP),
+            await artistImage.GetStreamAsync(ImageSize.Small, ImageType.WebP));
+          
+          await _s3ImageUploadService.UploadImageToS3Async(
+            artistImage.GetKey(ImageSize.ExtraSmall, ImageType.WebP),
+            await artistImage.GetStreamAsync(ImageSize.ExtraSmall, ImageType.WebP));
         }
         catch (Exception ex)
         {

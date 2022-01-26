@@ -88,7 +88,7 @@ public class ArtistImage
           break;
       }
 
-      await Image.SaveAsWebpAsync(memoryStream, new WebpEncoder { Quality = 50 });
+      await Image.SaveAsWebpAsync(memoryStream, new WebpEncoder { FileFormat = WebpFileFormatType.Lossy, Quality = 50 });
     }
 
     return memoryStream;

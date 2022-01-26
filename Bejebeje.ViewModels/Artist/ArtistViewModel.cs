@@ -35,6 +35,7 @@
     [Display(Name = "Is deleted?")]
     public bool IsDeleted { get; set; }
 
+    [Display(Name = "Has an image?")]
     public bool HasImage { get; set; }
 
     public string ImageUrl { get; set; }
