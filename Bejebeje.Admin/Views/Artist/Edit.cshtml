@@ -6,49 +6,54 @@
 
 <h1>Edit artist</h1>
 
-<hr />
+<hr/>
 
 <div class="row">
   <div class="col-md-4">
-    <form asp-action="Edit">
+    <form enctype="multipart/form-data" asp-action="Edit">
       <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-      <input asp-for="Id" type="hidden" />
+      <input asp-for="Id" type="hidden"/>
+      <input asp-for="HasImage" type="hidden"/>
 
       <div class="form-group">
         <label asp-for="FirstName" class="control-label"></label>
-        <input asp-for="FirstName" class="form-control" />
+        <input asp-for="FirstName" class="form-control"/>
         <span asp-validation-for="FirstName" class="text-danger"></span>
       </div>
 
       <div class="form-group">
         <label asp-for="LastName" class="control-label"></label>
-        <input asp-for="LastName" class="form-control" />
+        <input asp-for="LastName" class="form-control"/>
         <span asp-validation-for="LastName" class="text-danger"></span>
       </div>
 
       <div class="form-group">
         <label class="control-label">Sex</label>
-
         <select asp-for="Sex.SelectedSex" asp-items="Model.Sex.SexOptions" class="form-control"></select>
-
         <span asp-validation-for="Sex.SelectedSex" class="text-danger"></span>
+      </div>
+
+      <div class="form-group">
+        <label asp-for="Image" class="control-label"></label>
+        <input asp-for="Image" class="form-control"/>
+        <span asp-validation-for="Image" class="text-danger"></span>
       </div>
 
       <div class="form-group form-check">
         <label class="form-check-label">
-          <input class="form-check-input" asp-for="IsApproved" /> @Html.DisplayNameFor(model => model.IsApproved)
+          <input class="form-check-input" asp-for="IsApproved"/> @Html.DisplayNameFor(model => model.IsApproved)
         </label>
       </div>
 
       <div class="form-group form-check">
         <label class="form-check-label">
-          <input class="form-check-input" asp-for="IsDeleted" /> @Html.DisplayNameFor(model => model.IsDeleted)
+          <input class="form-check-input" asp-for="IsDeleted"/> @Html.DisplayNameFor(model => model.IsDeleted)
         </label>
       </div>
 
       <div class="form-group">
-        <input type="submit" value="Edit artist" class="btn btn-primary" />
+        <input type="submit" value="Edit artist" class="btn btn-primary"/>
       </div>
     </form>
   </div>
@@ -59,5 +64,5 @@
 </div>
 
 @section Scripts {
-  @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+  @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

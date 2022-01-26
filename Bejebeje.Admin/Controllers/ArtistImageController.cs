@@ -21,7 +21,7 @@
     {
       ArtistImageReadViewModel image = await _artistImageService.GetImageByArtistIdAsync(id);
 
-      byte[] data = null;
+      byte[]? data = null;
 
       if (image != null)
       {

@@ -10,7 +10,7 @@
   using ViewModels.Artist;
   using ViewModels.ArtistSlug;
   using ViewModels.Shared;
-
+  
   [Authorize(Roles = "admin,mod")]
   public class ArtistController : Controller
   {
@@ -79,6 +79,7 @@
       viewModel.IsApproved = artist.IsApproved;
       viewModel.IsDeleted = artist.IsDeleted;
       viewModel.Sex = artist.Sex;
+      viewModel.HasImage = artist.HasImage;
 
       return View(viewModel);
     }
@@ -86,6 +87,8 @@
     [HttpPost]
     public async Task<IActionResult> Edit(ArtistEditViewModel editedArtist)
     {
+      if (!ModelState.IsValid) return View(editedArtist);
+      
       try
       {
         await _artistService.EditArtistAsync(editedArtist);

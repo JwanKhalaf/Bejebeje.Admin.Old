@@ -8,6 +8,7 @@
   using Config;
   using Microsoft.Extensions.Options;
   using Npgsql;
+  using SixLabors.ImageSharp;
   using ViewModels.Artist;
   using ViewModels.ArtistSlug;
   using ViewModels.Shared;
@@ -18,16 +19,16 @@
 
     private readonly IArtistSlugService _artistSlugService;
 
-    private readonly IArtistImageService _artistImageService;
+    private readonly IS3ImageUploadService _s3ImageUploadService;
 
     public ArtistService(
       IOptionsMonitor<DatabaseOptions> optionsAccessor,
       IArtistSlugService artistSlugService,
-      IArtistImageService artistImageService)
+      IS3ImageUploadService s3ImageUploadService)
     {
       _databaseOptions = optionsAccessor.CurrentValue;
       _artistSlugService = artistSlugService;
-      _artistImageService = artistImageService;
+      _s3ImageUploadService = s3ImageUploadService;
     }
 
     public async Task<IEnumerable<ArtistListItemViewModel>> GetArtistsAsync()
@@ -103,7 +104,7 @@
             if (artist.HasImage)
             {
               artist.ImageUrl =
-                $"https://s3.eu-west-2.amazonaws.com/bejebeje.com/artist-images/small/{artist.FullName.NormalizeStringForUrl()}-{artist.Id}.jpg";
+                $"https://s3.eu-west-2.amazonaws.com/bejebeje.com/artist-images/{artist.Id}-sm.jpg";
             }
           }
         }
@@ -121,7 +122,8 @@
     public async Task<int> AddArtistAsync(ArtistViewModel artist)
     {
       string connectionString = _databaseOptions.ConnectionString;
-      string sqlStatement = "insert into artists (first_name, last_name, full_name, sex, is_approved, user_id, created_at, is_deleted, has_image) values (@first_name, @last_name, @full_name, @sex, @is_approved, @user_id, @created_at, @is_deleted, @has_image) returning id";
+      string sqlStatement =
+        "insert into artists (first_name, last_name, full_name, sex, is_approved, user_id, created_at, is_deleted, has_image) values (@first_name, @last_name, @full_name, @sex, @is_approved, @user_id, @created_at, @is_deleted, @has_image) returning id";
       int artistId = 0;
 
       string firstName = artist.FirstName.Standardize();
@@ -174,7 +176,8 @@
     public async Task EditArtistAsync(ArtistEditViewModel editedArtist)
     {
       string connectionString = _databaseOptions.ConnectionString;
-      string sqlStatementToUpdateLyric = "update artists set first_name = @first_name, last_name = @last_name, full_name = @full_name, sex = @sex, is_approved = @is_approved, modified_at = @modified_at, is_deleted = @is_deleted where id = @id";
+      string sqlStatementToUpdateLyric =
+        "update artists set first_name = @first_name, last_name = @last_name, full_name = @full_name, sex = @sex, is_approved = @is_approved, modified_at = @modified_at, is_deleted = @is_deleted, has_image = @has_image where id = @id";
 
       int artistId = editedArtist.Id;
       string firstName = editedArtist.FirstName.Standardize();
@@ -186,6 +189,7 @@
       bool isApproved = editedArtist.IsApproved;
       DateTime modifiedAt = DateTime.UtcNow;
       bool isDeleted = editedArtist.IsDeleted;
+      bool hasImage = editedArtist.Image is not null || editedArtist.HasImage;
 
       IEnumerable<ArtistSlugViewModel> artistSlugs = await _artistSlugService.GetSlugsForArtistAsync(editedArtist.Id);
 
@@ -224,12 +228,41 @@
         command.Parameters.AddWithValue("@is_approved", isApproved);
         command.Parameters.AddWithValue("@modified_at", modifiedAt);
         command.Parameters.AddWithValue("@is_deleted", isDeleted);
+        command.Parameters.AddWithValue("@has_image", hasImage);
 
         try
         {
           await connection.OpenAsync();
 
           await command.ExecuteNonQueryAsync();
+          
+          Image standardImage = await Image.LoadAsync(editedArtist.Image.OpenReadStream());
+
+          ArtistImage artistImage = new ArtistImage(editedArtist.Id, standardImage);
+
+          await _s3ImageUploadService.UploadImageToS3Async(
+            artistImage.GetKey(ImageSize.Standard, ImageType.Jpeg),
+            await artistImage.GetStreamAsync(ImageSize.Standard, ImageType.Jpeg));
+          
+          await _s3ImageUploadService.UploadImageToS3Async(
+            artistImage.GetKey(ImageSize.Small, ImageType.Jpeg),
+            await artistImage.GetStreamAsync(ImageSize.Small, ImageType.Jpeg));
+          
+          await _s3ImageUploadService.UploadImageToS3Async(
+            artistImage.GetKey(ImageSize.ExtraSmall, ImageType.Jpeg),
+            await artistImage.GetStreamAsync(ImageSize.ExtraSmall, ImageType.Jpeg));
+      
+          await _s3ImageUploadService.UploadImageToS3Async(
+            artistImage.GetKey(ImageSize.Standard, ImageType.WebP),
+            await artistImage.GetStreamAsync(ImageSize.Standard, ImageType.WebP));
+          
+          await _s3ImageUploadService.UploadImageToS3Async(
+            artistImage.GetKey(ImageSize.Small, ImageType.WebP),
+            await artistImage.GetStreamAsync(ImageSize.Small, ImageType.WebP));
+          
+          await _s3ImageUploadService.UploadImageToS3Async(
+            artistImage.GetKey(ImageSize.ExtraSmall, ImageType.WebP),
+            await artistImage.GetStreamAsync(ImageSize.ExtraSmall, ImageType.WebP));
         }
         catch (Exception ex)
         {
