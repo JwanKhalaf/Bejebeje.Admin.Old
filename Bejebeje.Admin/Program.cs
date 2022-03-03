@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
@@ -13,7 +12,7 @@ using Bejebeje.Services.Config;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // add services to the container.
 IdentityModelEventSource.ShowPII = true;
@@ -24,6 +23,8 @@ string clientSecret = builder.Configuration["IdentityServerConfiguration:ClientS
 builder.Services.Configure<DatabaseOptions>(builder.Configuration);
 
 builder.Services.Configure<AWSOptions>(builder.Configuration.GetSection("AWSOptions"));
+
+builder.WebHost.UseSentry();
 
 builder.Services.AddScoped<IArtistService, ArtistService>();
 
@@ -64,7 +65,7 @@ JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 ForwardedHeadersOptions forwardedHeadersOptions = new ForwardedHeadersOptions
 {
@@ -75,6 +76,8 @@ forwardedHeadersOptions.KnownNetworks.Clear();
 forwardedHeadersOptions.KnownProxies.Clear();
 
 app.UseForwardedHeaders(forwardedHeadersOptions);
+
+app.UseSentryTracing();
 
 // configure the http request pipeline.
 if (!app.Environment.IsDevelopment())
