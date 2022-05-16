@@ -79,6 +79,7 @@
       viewModel.Id = lyric.Id;
       viewModel.Title = lyric.Title;
       viewModel.Body = lyric.Body;
+      viewModel.IsApproved = lyric.IsApproved;
       viewModel.IsVerified = lyric.IsVerified;
       viewModel.IsDeleted = lyric.IsDeleted;
 
@@ -91,6 +92,13 @@
       await _lyricService.EditLyricAsync(updatedLyric);
 
       return RedirectToAction("Details", new { id = updatedLyric.Id });
+    }
+
+    public async Task<IActionResult> AwaitingApproval()
+    {
+      LyricsAwaitingApprovalViewModel viewModel = await _lyricService.GetLyricsAwaitingApproval();
+
+      return View(viewModel);
     }
   }
 }

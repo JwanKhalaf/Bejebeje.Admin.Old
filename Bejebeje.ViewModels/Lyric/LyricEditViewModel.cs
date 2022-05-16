@@ -12,6 +12,10 @@
 
     [Required]
     public string Body { get; set; }
+    
+    [Required]
+    [Display(Name = "Is approved?")]
+    public bool IsApproved { get; set; }
 
     [Required]
     [Display(Name = "Is verified?")]
