@@ -12,5 +12,7 @@
     Task<int> AddLyricAsync(LyricCreateViewModel newLyric);
 
     Task EditLyricAsync(LyricEditViewModel editedLyric);
+
+    Task<LyricsAwaitingApprovalViewModel> GetLyricsAwaitingApproval();
   }
 }

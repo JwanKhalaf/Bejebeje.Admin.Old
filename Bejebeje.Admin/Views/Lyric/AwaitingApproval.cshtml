@@ -1,0 +1,37 @@
+@model Bejebeje.ViewModels.Lyric.LyricsAwaitingApprovalViewModel
+
+@{
+  ViewData["Title"] = "Lyrics awaiting approval";
+}
+
+<div class="heading mb-5">
+  <h1>Lyrics awaiting approval</h1>
+</div>
+
+<table class="table">
+  <thead>
+  <tr>
+    <th scope="col">Lyric Id</th>
+    <th scope="col">Lyric Title</th>
+    <th scope="col">Artist Name</th>
+    <th scope="col">Created At</th>
+    <th scope="col">Modified At</th>
+    <th></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  @foreach (var item in Model.Lyrics)
+  {
+    <tr>
+      <td>@item.LyricId</td>
+      <td>@item.LyricTitle</td>
+      <td>@item.ArtistName</td>
+      <td>@item.CreatedAt.ToString("dd MMM yyyy hh:mm:ss")</td>
+      <td style="text-align: right">
+        @Html.ActionLink("Edit", "Edit", new { id = item.LyricId })
+      </td>
+    </tr>
+  }
+  </tbody>
+</table>

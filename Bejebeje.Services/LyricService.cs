@@ -54,11 +54,11 @@
             lyric.Body = Convert.ToString(reader[2]);
             lyric.UserId = Convert.ToString(reader[3]);
             lyric.CreatedAt = Convert.ToDateTime(reader[4]);
-            lyric.ModifiedAt = reader[5] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader[5]);
+            lyric.ModifiedAt = reader[5] == DBNull.Value ? null : Convert.ToDateTime(reader[5]);
             lyric.IsDeleted = Convert.ToBoolean(reader[6]);
             lyric.IsApproved = Convert.ToBoolean(reader[7]);
             lyric.ArtistId = Convert.ToInt32(reader[8]);
-            lyric.AuthorId = reader[9] == DBNull.Value ? (int?)null : Convert.ToInt32(reader[9]);
+            lyric.AuthorId = reader[9] == DBNull.Value ? null : Convert.ToInt32(reader[9]);
             lyric.IsVerified = Convert.ToBoolean(reader[10]);
           }
         }
@@ -97,11 +97,11 @@
             lyric.Body = Convert.ToString(reader[2]);
             lyric.UserId = Convert.ToString(reader[3]);
             lyric.CreatedAt = Convert.ToDateTime(reader[4]);
-            lyric.ModifiedAt = reader[5] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader[5]);
+            lyric.ModifiedAt = reader[5] == DBNull.Value ? null : Convert.ToDateTime(reader[5]);
             lyric.IsDeleted = Convert.ToBoolean(reader[6]);
             lyric.IsApproved = Convert.ToBoolean(reader[7]);
             lyric.ArtistId = Convert.ToInt32(reader[8]);
-            lyric.AuthorId = reader[9] == DBNull.Value ? (int?)null : Convert.ToInt32(reader[9]);
+            lyric.AuthorId = reader[9] == DBNull.Value ? null : Convert.ToInt32(reader[9]);
 
             lyrics.Add(lyric);
           }
@@ -183,7 +183,7 @@
       bool slugDoesNotExistAlready = lyricSlugs.All(s => s.Name != updatedSlug);
 
       string connectionString = _databaseOptions.ConnectionString;
-      string sqlStatementToUpdateLyric = "update lyrics set title = @title, body = @body, is_verified = @is_verified, is_deleted = @is_deleted, modified_at = @modified_at where id = @id";
+      string sqlStatementToUpdateLyric = "update lyrics set title = @title, body = @body, is_approved = @is_approved, is_verified = @is_verified, is_deleted = @is_deleted, modified_at = @modified_at where id = @id";
 
       using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
       {
@@ -191,6 +191,7 @@
         command.Parameters.AddWithValue("@id", editedLyric.Id);
         command.Parameters.AddWithValue("@title", editedLyric.Title);
         command.Parameters.AddWithValue("@body", editedLyric.Body);
+        command.Parameters.AddWithValue("@is_approved", editedLyric.IsApproved);
         command.Parameters.AddWithValue("@is_verified", editedLyric.IsVerified);
         command.Parameters.AddWithValue("@is_deleted", editedLyric.IsDeleted);
         command.Parameters.AddWithValue("modified_at", modifiedAt);
@@ -247,6 +248,48 @@
 
         await _lyricSlugService.MakeLyricSlugPrimaryAsync(existingLyricSlug.Id);
       }
+    }
+
+    public async Task<LyricsAwaitingApprovalViewModel> GetLyricsAwaitingApproval()
+    {
+      string connectionString = _databaseOptions.ConnectionString;
+      string sqlStatement = "select l.id as lyric_id, l.title as lyric_title, a.id as artist_id, a.full_name as artist_name, l.user_id as submitted_by_user_id, l.created_at, l.modified_at from lyrics l left join artists a on a.id = l.artist_id where l.is_deleted = false and l.is_approved = false;";
+      LyricsAwaitingApprovalViewModel model = new LyricsAwaitingApprovalViewModel();
+      List<LyricApprovalItemViewModel> lyricItems = new List<LyricApprovalItemViewModel>();
+
+      using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+      {
+        NpgsqlCommand command = new NpgsqlCommand(sqlStatement, connection);
+
+        try
+        {
+          await connection.OpenAsync();
+
+          NpgsqlDataReader reader = await command.ExecuteReaderAsync();
+
+          while (reader.Read())
+          {
+            LyricApprovalItemViewModel lyric = new LyricApprovalItemViewModel();
+            lyric.LyricId = Convert.ToInt32(reader[0]);
+            lyric.LyricTitle = Convert.ToString(reader[1]);
+            lyric.ArtistId = Convert.ToInt32(reader[2]);
+            lyric.ArtistName = Convert.ToString(reader[3]);
+            lyric.SubmittedBy = "Cano"; // Convert.ToString(reader[2]);
+            lyric.CreatedAt = Convert.ToDateTime(reader[5]);
+            lyric.ModifiedAt = reader[6] == DBNull.Value ? null : Convert.ToDateTime(reader[6]);
+
+            lyricItems.Add(lyric);
+          }
+        }
+        catch (Exception ex)
+        {
+          Console.WriteLine(ex.Message);
+        }
+      }
+
+      model.Lyrics = lyricItems;
+      
+      return model;
     }
   }
 }
